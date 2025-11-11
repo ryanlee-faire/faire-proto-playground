@@ -171,7 +171,7 @@ export default function ProductDetailPage() {
 
                 {/* Add to Cart Button */}
                 <div className="flex gap-4 mb-6">
-                  <button className="flex-1 bg-[#333333] text-white py-3 px-6 rounded font-medium hover:bg-[#222222] transition-colors duration-500 ease-in-out">
+                  <button className="flex-1 bg-[#333333] text-white py-3 px-6 rounded text-sm hover:bg-[#222222] transition-colors duration-500 ease-in-out">
                     Add to cart · {product.price}
                   </button>
                   {buttonLayoutVariant && (

@@ -81,8 +81,8 @@ function App() {
     </BrowserRouter>
   );
 
-  // Wrap with Okta Security if enabled
-  if (isOktaEnabled) {
+  // Wrap with Okta Security if enabled and oktaAuth is configured
+  if (isOktaEnabled && oktaAuth) {
     const restoreOriginalUri = async (_oktaAuth: any, originalUri: string) => {
       window.location.replace(originalUri);
     };
