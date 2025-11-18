@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import SurfacesMenu from "./SurfacesMenu";
 import { useCompass } from "../contexts/CompassContext";
 import SearchDropdown from "./SearchDropdown";
@@ -202,10 +203,14 @@ export default function RetailerGlobalNavLoggedIn({
 }: RetailerGlobalNavLoggedInProps) {
   const detectedDevice = useViewport();
   const currentDevice = device || detectedDevice;
+  const location = useLocation();
   const [searchValue, setSearchValue] = useState("");
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const { togglePanel } = useCompass();
   const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  // Only enable Compass on specific routes (not on index page)
+  const isCompassEnabled = location.pathname !== '/';
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -281,7 +286,7 @@ export default function RetailerGlobalNavLoggedIn({
                 <SearchIcon className="w-4 h-4" />
               </div>
             </div>
-            {showSearchDropdown && (
+            {showSearchDropdown && isCompassEnabled && (
               <SearchDropdown 
                 searchQuery={searchValue} 
                 onClose={() => setShowSearchDropdown(false)} 
@@ -290,17 +295,19 @@ export default function RetailerGlobalNavLoggedIn({
           </div>
           <div className="flex items-center gap-2">
             <SurfacesMenu />
-            <button
-              data-test-id="compassButton"
-              onClick={togglePanel}
-              className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
-              aria-label="Compass"
-              type="button"
-            >
-              <div className="flex items-center justify-center w-10 h-10 relative">
-                <CompassIcon className="w-5 h-5" />
-              </div>
-            </button>
+            {isCompassEnabled && (
+              <button
+                data-test-id="compassButton"
+                onClick={togglePanel}
+                className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
+                aria-label="Compass"
+                type="button"
+              >
+                <div className="flex items-center justify-center w-10 h-10 relative">
+                  <CompassIcon className="w-5 h-5" />
+                </div>
+              </button>
+            )}
             <button
               data-test-id="notificationDropdown"
               className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
@@ -364,7 +371,7 @@ export default function RetailerGlobalNavLoggedIn({
               <SearchIcon className="w-4 h-4" />
             </div>
           </div>
-          {showSearchDropdown && (
+          {showSearchDropdown && isCompassEnabled && (
             <div className="absolute top-[72px] left-4 right-4">
               <SearchDropdown 
                 searchQuery={searchValue} 
@@ -396,20 +403,23 @@ export default function RetailerGlobalNavLoggedIn({
               )}
             </div>
           </a>
-          <button
-            data-test-id="compassButton"
-            onClick={togglePanel}
-            className="absolute bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 right-[88px] top-2 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
-            aria-label="Compass"
-            type="button"
-          >
-            <div className="flex items-center justify-center w-10 h-10 relative">
-              <CompassIcon className="w-5 h-5" />
-            </div>
-          </button>
+          {isCompassEnabled && (
+            <button
+              data-test-id="compassButton"
+              onClick={togglePanel}
+              className="absolute bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 right-[88px] top-2 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
+              aria-label="Compass"
+              type="button"
+            >
+              <div className="flex items-center justify-center w-10 h-10 relative">
+                <CompassIcon className="w-5 h-5" />
+              </div>
+            </button>
+          )}
           <button
             data-test-id="notificationDropdown"
-            className="absolute bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 right-12 top-2 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
+            className="absolute bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 top-2 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
+            style={isCompassEnabled ? { right: '48px' } : { right: '12px' }}
             aria-label="Notifications"
             type="button"
           >
@@ -519,7 +529,7 @@ export default function RetailerGlobalNavLoggedIn({
               <SearchIcon className="w-4 h-4" />
             </div>
           </div>
-          {showSearchDropdown && (
+          {showSearchDropdown && isCompassEnabled && (
             <SearchDropdown 
               searchQuery={searchValue} 
               onClose={() => setShowSearchDropdown(false)} 
@@ -544,20 +554,24 @@ export default function RetailerGlobalNavLoggedIn({
             </button>
           </>
         )}
-        <div>
-          <button
-            data-test-id="compassButton"
-            onClick={togglePanel}
-            className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
-            aria-label="Compass"
-            type="button"
-          >
-            <div className="flex items-center justify-center w-10 h-10 relative">
-              <CompassIcon className="w-5 h-5" />
+        {isCompassEnabled && (
+          <>
+            <div>
+              <button
+                data-test-id="compassButton"
+                onClick={togglePanel}
+                className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
+                aria-label="Compass"
+                type="button"
+              >
+                <div className="flex items-center justify-center w-10 h-10 relative">
+                  <CompassIcon className="w-5 h-5" />
+                </div>
+              </button>
             </div>
-          </button>
-        </div>
-        <div className="hidden lg:block" style={{ width: "8px", height: "0px" }} />
+            <div className="hidden lg:block" style={{ width: "8px", height: "0px" }} />
+          </>
+        )}
         <div>
           <button
             data-test-id="notificationDropdown"

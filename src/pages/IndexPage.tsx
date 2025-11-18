@@ -1,10 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import RetailerLayout from "../components/RetailerLayout";
 import { surfaces } from "../config/surfaces";
 import { components } from "../config/components";
 
 export default function IndexPage() {
+  const [isBrandExperimentalOpen, setIsBrandExperimentalOpen] = useState(false);
+  const [isBrandTemplatesOpen, setIsBrandTemplatesOpen] = useState(false);
+  const [isExperimentalOpen, setIsExperimentalOpen] = useState(true);
+  const [isTemplatesOpen, setIsTemplatesOpen] = useState(true);
+  const [isComponentsOpen, setIsComponentsOpen] = useState(false);
+
+  const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
+    <svg
+      className={`w-4 h-4 transition-transform duration-200 ${isOpen ? '' : '-rotate-90'}`}
+      fill="currentColor"
+      viewBox="0 0 20 20"
+    >
+      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+    </svg>
+  );
 
   return (
     <RetailerLayout languageSelector={false} cartCount={0}>
@@ -18,69 +33,148 @@ export default function IndexPage() {
         }}
       >
         <div style={{ gridColumn: "1 / -1" }}>
-          {/* Brand Experience Section */}
-          <h1 className="text-3xl font-semibold text-gray-800 mb-8">Brand experience prototyping</h1>
+          {/* Page Title */}
+          <h1 className="text-4xl font-bold text-gray-900 mb-6">Design Prototype Playground</h1>
+          <div className="border-b border-[#dfe0e1] mb-8"></div>
           
+          {/* Brand Experience Section */}
+          <h2 className="text-3xl font-semibold text-gray-800 mb-4">Brand</h2>
+          
+          {/* Brand Experimental Section */}
+          <div className="mb-6">
+            <button
+              onClick={() => setIsBrandExperimentalOpen(!isBrandExperimentalOpen)}
+              className="flex items-center gap-2 w-full text-left mb-4 hover:opacity-70 transition-opacity"
+            >
+              <ChevronIcon isOpen={isBrandExperimentalOpen} />
+              <h3 className="text-2xl font-semibold text-gray-800">Experimental</h3>
+            </button>
+            {isBrandExperimentalOpen && (
+              <ul className="space-y-4 ml-6">
+                <li className="flex items-center gap-2">
+                  <Link
+                    to="/faire/bulk-editor"
+                    className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                  >
+                    Bulk editor page
+                  </Link>
+                  <span className="text-xs bg-[#757575] text-white px-2 py-0.5 rounded">John</span>
+                </li>
+              </ul>
+            )}
+          </div>
+
+          {/* Brand Starter Templates Section */}
           <div className="mb-12">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Starter templates</h2>
-            <ul className="space-y-4">
-              <li>
-                <Link
-                  to="/faire/products"
-                  className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
-                >
-                  Products page
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/faire/bulk-editor"
-                  className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
-                >
-                  Bulk editor page
-                </Link>
-              </li>
-            </ul>
+            <button
+              onClick={() => setIsBrandTemplatesOpen(!isBrandTemplatesOpen)}
+              className="flex items-center gap-2 w-full text-left mb-4 hover:opacity-70 transition-opacity"
+            >
+              <ChevronIcon isOpen={isBrandTemplatesOpen} />
+              <h3 className="text-2xl font-semibold text-gray-800">Starter templates</h3>
+            </button>
+            {isBrandTemplatesOpen && (
+              <ul className="space-y-4 ml-6">
+                <li className="flex items-center gap-2">
+                  <Link
+                    to="/faire/products"
+                    className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                  >
+                    Products page
+                  </Link>
+                  <span className="text-xs bg-[#757575] text-white px-2 py-0.5 rounded">John</span>
+                </li>
+              </ul>
+            )}
           </div>
 
           {/* Retailer Experience Section */}
-          <h1 className="text-3xl font-semibold text-gray-800 mb-8">Retailer experience prototyping</h1>
+          <h2 className="text-3xl font-semibold text-gray-800 mb-4 mt-12">Retailer</h2>
+          
+          {/* Experimental Section */}
+          <div className="mb-6">
+            <button
+              onClick={() => setIsExperimentalOpen(!isExperimentalOpen)}
+              className="flex items-center gap-2 w-full text-left mb-4 hover:opacity-70 transition-opacity"
+            >
+              <ChevronIcon isOpen={isExperimentalOpen} />
+              <h3 className="text-2xl font-semibold text-gray-800">Experimental</h3>
+            </button>
+            {isExperimentalOpen && (
+              <ul className="space-y-4 ml-6">
+                <li>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to="/template"
+                      className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                    >
+                      🧭 Compass Prototype (JI)
+                    </Link>
+                    <span className="text-xs bg-[#757575] text-white px-2 py-0.5 rounded">John</span>
+                  </div>
+                  <p className="text-sm text-[#757575] mt-1">
+                    AI-powered product discovery that helps retailers find multiple product types in one search
+                  </p>
+                </li>
+              </ul>
+            )}
+          </div>
           
           {/* Templates Section */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Starter templates</h2>
-            <ul className="space-y-4">
-              {surfaces.map((surface) => (
-                <li key={surface.path}>
-                  <a
-                    href={surface.path}
-                    className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
-                  >
-                    {surface.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
+          <div className="mb-6">
+            <button
+              onClick={() => setIsTemplatesOpen(!isTemplatesOpen)}
+              className="flex items-center gap-2 w-full text-left mb-4 hover:opacity-70 transition-opacity"
+            >
+              <ChevronIcon isOpen={isTemplatesOpen} />
+              <h3 className="text-2xl font-semibold text-gray-800">Starter templates</h3>
+            </button>
+            {isTemplatesOpen && (
+              <ul className="space-y-4 ml-6">
+                {surfaces.map((surface) => (
+                  <li key={surface.path} className="flex items-center gap-2">
+                    <a
+                      href={surface.path}
+                      className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                    >
+                      {surface.name}
+                    </a>
+                    <span className="text-xs bg-[#333333] text-white px-2 py-0.5 rounded">Ryan</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* Components Section */}
           <div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Components</h2>
-            <ul className="space-y-4">
-              {components.map((component) => (
-                <li key={component.path}>
-                  <a
-                    href={component.path}
-                    className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
-                  >
-                    {component.name}
-                  </a>
-                  {component.description && (
-                    <p className="text-sm text-[#757575] mt-1">{component.description}</p>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <button
+              onClick={() => setIsComponentsOpen(!isComponentsOpen)}
+              className="flex items-center gap-2 w-full text-left mb-4 hover:opacity-70 transition-opacity"
+            >
+              <ChevronIcon isOpen={isComponentsOpen} />
+              <h3 className="text-2xl font-semibold text-gray-800">Components</h3>
+            </button>
+            {isComponentsOpen && (
+              <ul className="space-y-4 ml-6">
+                {components.map((component) => (
+                  <li key={component.path}>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={component.path}
+                        className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                      >
+                        {component.name}
+                      </a>
+                      <span className="text-xs bg-[#333333] text-white px-2 py-0.5 rounded">Ryan</span>
+                    </div>
+                    {component.description && (
+                      <p className="text-sm text-[#757575] mt-1">{component.description}</p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>
