@@ -5,6 +5,7 @@ export interface Surface {
 
 export const surfaces: Surface[] = [
   { name: "Basic logged-in", path: "/template" },
+  { name: "New page", path: "/new-page" },
   { name: "PDP", path: "/pdp" },
   { name: "PDP v2", path: "/pdp-v2" },
   { name: "Checkout", path: "/checkout" },

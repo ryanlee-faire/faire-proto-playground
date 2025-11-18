@@ -8,6 +8,7 @@ import ProductDetailPageV2 from "./pages/ProductDetailPageV2";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import ComponentShowcasePage from "./pages/ComponentShowcasePage";
+import NewPage from "./pages/NewPage";
 import GridOverlay from "./components/GridOverlay";
 import SurfacesMenuOverlay from "./components/SurfacesMenuOverlay";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -50,6 +51,7 @@ function AppContent() {
         <Route path="/login/callback" element={<LoginCallback />} />
         <Route path="/" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
         <Route path="/template" element={<RouteWrapper><TemplatePage /></RouteWrapper>} />
+        <Route path="/new-page" element={<RouteWrapper><NewPage /></RouteWrapper>} />
         <Route path="/pdp" element={<RouteWrapper><ProductDetailPage /></RouteWrapper>} />
         <Route path="/pdp-v2" element={<RouteWrapper><ProductDetailPageV2 /></RouteWrapper>} />
         <Route path="/checkout" element={<RouteWrapper><CheckoutPage /></RouteWrapper>} />

@@ -196,21 +196,21 @@ export default function ProductDetailPageV2() {
                 <div className="mb-6">
                   <h2 className="text-sm font-medium text-[#333333] mb-4">Shipping & policies</h2>
                   <ul className="space-y-3">
-                    <li className="flex items-start gap-2 text-sm text-[#333333]">
-                      <svg className="w-5 h-5 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <li className="flex items-center gap-2 text-sm text-[#333333]">
+                      <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M2.714 4.428A1.714 1.714 0 0 0 1 6.142v15.429a1.714 1.714 0 0 0 1.714 1.714h18.857a1.714 1.714 0 0 0 1.715-1.714V6.142a1.714 1.714 0 0 0-1.715-1.714h-3.428M1 11.285h22.286M6.143 1v6.857M18.143 1v6.857M6.143 4.428h8.571" />
                       </svg>
                       <span>Estimated delivery <span className="underline">Nov 30-Dec 8</span></span>
                     </li>
-                    <li className="flex items-start gap-2 text-sm text-[#333333]">
-                      <svg className="w-5 h-5 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <li className="flex items-center gap-2 text-sm text-[#333333]">
+                      <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M.857 12a11.143 11.143 0 1 0 22.286 0A11.143 11.143 0 0 0 .857 12ZM.857 12h22.286" />
                         <path d="M16.285 12A19.24 19.24 0 0 1 12 23.143 19.24 19.24 0 0 1 7.714 12 19.24 19.24 0 0 1 12 .857 19.24 19.24 0 0 1 16.285 12Z" />
                       </svg>
                       <span>Ships from United States</span>
                     </li>
-                    <li className="flex items-start gap-2 text-sm text-[#333333]">
-                      <svg className="w-5 h-5 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <li className="flex items-center gap-2 text-sm text-[#333333]">
+                      <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="m7.8 11.8 3 3 6-6M18.857 15.429l3.429-.858.857 3.429" />
                         <path d="M22.286 14.571A11.31 11.31 0 0 1 12 22.286a10.32 10.32 0 0 1-9.663-6.772M5.143 8.571l-3.429.858L.857 6" />
                         <path d="M1.714 9.429A11.63 11.63 0 0 1 12 1.714a10.32 10.32 0 0 1 9.664 6.772" />
