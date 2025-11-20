@@ -32,6 +32,10 @@ export interface Message {
   chips?: string[]; // Suggestion chips to show
   interpretation?: string; // System interpretation text
   categories?: string[]; // Parsed categories to display
+  isThinking?: boolean; // Whether this is a "thinking" state message
+  thinkingStatus?: string; // Status text for thinking state
+  searchingCategories?: string[]; // Categories being searched during thinking
+  categorySearchProgress?: { category: string; count?: number; isSearching: boolean }[]; // Progressive search status with counts
   timestamp: Date;
 }
 
@@ -63,7 +67,8 @@ interface CompassContextType {
   openPanel: (entryPoint?: 'icon' | 'search', initialQuery?: string) => void;
   closePanel: () => void;
   togglePanel: () => void;
-  addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
+  addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => Message;
+  updateMessage: (messageId: string, updates: Partial<Message>) => void;
   clearMessages: () => void;
   clearInitialQuery: () => void;
   addProductToSelection: (product: CompassProduct) => void;
@@ -105,7 +110,7 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, isPanelOpen: !prev.isPanelOpen }));
   };
 
-  const addMessage = (message: Omit<Message, 'id' | 'timestamp'>) => {
+  const addMessage = (message: Omit<Message, 'id' | 'timestamp'>): Message => {
     const newMessage: Message = {
       ...message,
       id: `msg-${Date.now()}-${Math.random()}`,
@@ -114,6 +119,16 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     setState(prev => ({
       ...prev,
       messages: [...prev.messages, newMessage],
+    }));
+    return newMessage;
+  };
+
+  const updateMessage = (messageId: string, updates: Partial<Message>) => {
+    setState(prev => ({
+      ...prev,
+      messages: prev.messages.map(msg =>
+        msg.id === messageId ? { ...msg, ...updates } : msg
+      ),
     }));
   };
 
@@ -232,6 +247,7 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     closePanel,
     togglePanel,
     addMessage,
+    updateMessage,
     clearMessages,
     clearInitialQuery,
     addProductToSelection,

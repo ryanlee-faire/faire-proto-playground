@@ -12,8 +12,9 @@ import CompassMessage from './CompassMessage';
 import CompassInput from './CompassInput';
 
 export default function CompassChat() {
-  const { state, addMessage, addProductToSelection, removeProductFromSelection, clearInitialQuery } = useCompass();
+  const { state, addMessage, updateMessage, addProductToSelection, removeProductFromSelection, clearInitialQuery } = useCompass();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const thinkingMessageIdRef = useRef<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
   const [currentFilters, setCurrentFilters] = useState<FilterState>({
     categories: { Snacks: 3, Beverages: 3, 'Bath Products': 3 },
@@ -85,36 +86,87 @@ export default function CompassChat() {
       }
     }
 
-    // Initial search flow: Extract categories and show results
-    const detectedCategories = extractCategories(userInput);
+    // Show "thinking" state first with initial progress
+    const thinkingMessage = {
+      role: 'assistant' as const,
+      content: 'Working...',
+      isThinking: true,
+      thinkingStatus: `Searching for products that fit "${userInput}" across multiple categories`,
+      categorySearchProgress: [],
+    };
+    const addedMessage = addMessage(thinkingMessage);
+    thinkingMessageIdRef.current = addedMessage.id;
 
-    // Get products by category using current filters
-    const snacks = filterProducts(compassProducts, {
-      categories: ['snack'],
-      tags: currentFilters.includeTags,
-    }).slice(0, currentFilters.categories['Snacks'] || 3);
+    // Animate through categories progressively - ONE AT A TIME
+    const categories = ['Snacks', 'Beverages', 'Bath Products', 'Accessories'];
+    const counts = [420, 267, 134, 189]; // Simulated search result counts
 
-    const beverages = filterProducts(compassProducts, {
-      categories: ['beverage'],
-      tags: currentFilters.includeTags,
-    }).slice(0, currentFilters.categories['Beverages'] || 3);
+    categories.forEach((category, index) => {
+      // First, show the category appearing with searching state
+      setTimeout(() => {
+        if (thinkingMessageIdRef.current) {
+          // Build progress array showing only categories up to current index
+          const progress = categories.slice(0, index + 1).map((cat, i) => ({
+            category: cat,
+            count: i < index ? counts[i] : undefined, // Previous categories have counts
+            isSearching: i === index, // Current category is searching
+          }));
 
-    const soaps = filterProducts(compassProducts, {
-      categories: ['soap'],
-      tags: currentFilters.includeTags,
-    }).slice(0, currentFilters.categories['Bath Products'] || 3);
+          updateMessage(thinkingMessageIdRef.current, {
+            categorySearchProgress: progress,
+          });
+        }
 
-    addMessage({
-      role: 'assistant',
-      content: "I found a curated selection of NYC-local products perfect for your hotel rooms. I've organized them by category—food items, beverages, and bath products.",
-      interpretation: "Sourcing NYC-local brands across food, beverages, and soaps with premium packaging suitable for in-room amenities",
-      categories: detectedCategories.length > 0 ? detectedCategories : ['Snacks', 'Beverages', 'Bath Products'],
-      productsByCategory: [
-        { category: 'Food Items', products: snacks },
-        { category: 'Beverages', products: beverages },
-        { category: 'Bath Products', products: soaps },
-      ],
+        // After a short delay, show the count for this category
+        setTimeout(() => {
+          if (thinkingMessageIdRef.current) {
+            // Update to show the count
+            const progress = categories.slice(0, index + 1).map((cat, i) => ({
+              category: cat,
+              count: counts[i], // Now all visible categories have counts
+              isSearching: false,
+            }));
+
+            updateMessage(thinkingMessageIdRef.current, {
+              categorySearchProgress: progress,
+            });
+          }
+        }, 400);
+      }, index * 700);
     });
+
+    // After all categories are searched, show results
+    setTimeout(() => {
+      // Initial search flow: Extract categories and show results
+      const detectedCategories = extractCategories(userInput);
+
+      // Get products by category using current filters
+      const snacks = filterProducts(compassProducts, {
+        categories: ['snack'],
+        tags: currentFilters.includeTags,
+      }).slice(0, currentFilters.categories['Snacks'] || 3);
+
+      const beverages = filterProducts(compassProducts, {
+        categories: ['beverage'],
+        tags: currentFilters.includeTags,
+      }).slice(0, currentFilters.categories['Beverages'] || 3);
+
+      const soaps = filterProducts(compassProducts, {
+        categories: ['soap'],
+        tags: currentFilters.includeTags,
+      }).slice(0, currentFilters.categories['Bath Products'] || 3);
+
+      addMessage({
+        role: 'assistant',
+        content: `It looks like you're searching for "${userInput}"\n\nBased on that, I've interpreted this as you're looking for hospitality + premium + NYC-specific + guest amenities. I've organized the results by category below.`,
+        categories: detectedCategories.length > 0 ? detectedCategories : ['Snacks', 'Beverages', 'Bath Products'],
+        productsByCategory: [
+          { category: 'Food Items', products: snacks },
+          { category: 'Beverages', products: beverages },
+          { category: 'Bath Products', products: soaps },
+        ],
+      });
+    }, categories.length * 700 + 800); // Wait for all animations (700ms per category + 400ms for last count + buffer)
 
     // Add follow-up message after products have been revealed
     setTimeout(() => {
@@ -123,7 +175,7 @@ export default function CompassChat() {
         content: "What do you think? Add items to your cart or let me know what you want me to adjust in my search criteria.",
         chips: ['Show more snacks', 'No plastic', 'Local brands only'],
       });
-    }, 2000);
+    }, categories.length * 700 + 3300); // Wait for animations + products to appear
   };
 
   const showFilteredResults = (filters: FilterState) => {

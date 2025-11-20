@@ -40,6 +40,53 @@ export default function CompassMessage({
   }
 
   if (isAssistant) {
+    // Thinking state - special rendering
+    if (message.isThinking) {
+      return (
+        <div className="flex flex-col mb-6 px-6">
+          {/* Thinking message bubble */}
+          <div className="max-w-[85%] bg-[#f5f5f5] text-[#333333] px-4 py-3 rounded-2xl rounded-tl-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" strokeLinecap="round" />
+              </svg>
+              <p className="text-sm font-medium">{message.content}</p>
+            </div>
+            {message.thinkingStatus && (
+              <p className="text-sm text-[#757575] mb-3">{message.thinkingStatus}</p>
+            )}
+            {message.categorySearchProgress && message.categorySearchProgress.length > 0 && (
+              <div className="mt-2">
+                <p className="text-xs text-[#757575] mb-2">Searching</p>
+                <div className="flex flex-col gap-1">
+                  {message.categorySearchProgress.map((progress, index) => (
+                    <div key={index} className="flex items-center gap-2 text-xs text-[#333333]">
+                      <svg
+                        className={`w-3 h-3 ${progress.isSearching ? 'animate-spin' : ''}`}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="M21 21l-4.35-4.35" />
+                      </svg>
+                      <span className={progress.count !== undefined ? 'font-medium' : ''}>
+                        {progress.category}
+                        {progress.count !== undefined && (
+                          <span className="text-[#757575] ml-1">({progress.count})</span>
+                        )}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="flex flex-col mb-6 px-6">
         {/* Assistant message bubble */}
