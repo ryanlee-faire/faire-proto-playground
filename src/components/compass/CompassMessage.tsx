@@ -2,16 +2,19 @@ import React from 'react';
 import { Message, CompassProduct } from '../../contexts/CompassContext';
 import { useCompass } from '../../contexts/CompassContext';
 import CompassProductCard from './CompassProductCard';
+import CompassCategoryParsing from './CompassCategoryParsing';
 
 interface CompassMessageProps {
   message: Message;
   onProductSelect?: (productId: string) => void;
+  onChipClick?: (chipText: string) => void;
   selectedProductIds?: string[];
 }
 
 export default function CompassMessage({
   message,
   onProductSelect,
+  onChipClick,
   selectedProductIds = [],
 }: CompassMessageProps) {
   const { addToCart, state } = useCompass();
@@ -50,6 +53,13 @@ export default function CompassMessage({
             <p className="text-xs text-[#757575] italic">
               {message.interpretation}
             </p>
+          </div>
+        )}
+
+        {/* Category parsing (if present) */}
+        {message.categories && message.categories.length > 0 && (
+          <div className="mt-4 px-4">
+            <CompassCategoryParsing categories={message.categories} />
           </div>
         )}
 
@@ -108,6 +118,7 @@ export default function CompassMessage({
             {message.chips.map((chip, index) => (
               <button
                 key={index}
+                onClick={() => onChipClick?.(chip)}
                 className="px-4 py-2 text-sm text-[#333333] bg-white border border-[#dfe0e1] rounded-full hover:bg-[#f5f5f5] hover:border-[#333333] transition-colors"
               >
                 {chip}

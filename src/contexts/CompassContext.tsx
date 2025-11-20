@@ -31,6 +31,7 @@ export interface Message {
   productsByCategory?: { category: string; products: CompassProduct[] }[]; // Products organized by category
   chips?: string[]; // Suggestion chips to show
   interpretation?: string; // System interpretation text
+  categories?: string[]; // Parsed categories to display
   timestamp: Date;
 }
 
@@ -54,15 +55,17 @@ export interface CompassState {
   cartItems: CartItem[]; // Cart with quantities
   entryPoint?: 'icon' | 'search'; // Track how user opened Compass
   currentProduct?: CompassProduct; // Product being viewed on PDP
+  initialQuery?: string; // Query passed from search bar
 }
 
 interface CompassContextType {
   state: CompassState;
-  openPanel: (entryPoint?: 'icon' | 'search') => void;
+  openPanel: (entryPoint?: 'icon' | 'search', initialQuery?: string) => void;
   closePanel: () => void;
   togglePanel: () => void;
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
   clearMessages: () => void;
+  clearInitialQuery: () => void;
   addProductToSelection: (product: CompassProduct) => void;
   removeProductFromSelection: (productId: string) => void;
   updateConstraints: (constraints: Partial<CompassState['activeConstraints']>) => void;
@@ -87,10 +90,11 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     cartItems: [],
     entryPoint: undefined,
     currentProduct: undefined,
+    initialQuery: undefined,
   });
 
-  const openPanel = (entryPoint: 'icon' | 'search' = 'icon') => {
-    setState(prev => ({ ...prev, isPanelOpen: true, entryPoint }));
+  const openPanel = (entryPoint: 'icon' | 'search' = 'icon', initialQuery?: string) => {
+    setState(prev => ({ ...prev, isPanelOpen: true, entryPoint, initialQuery }));
   };
 
   const closePanel = () => {
@@ -119,6 +123,13 @@ export function CompassProvider({ children }: { children: ReactNode }) {
       messages: [],
       activeConstraints: {},
       selectedProducts: [],
+    }));
+  };
+
+  const clearInitialQuery = () => {
+    setState(prev => ({
+      ...prev,
+      initialQuery: undefined,
     }));
   };
 
@@ -222,6 +233,7 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     togglePanel,
     addMessage,
     clearMessages,
+    clearInitialQuery,
     addProductToSelection,
     removeProductFromSelection,
     updateConstraints,

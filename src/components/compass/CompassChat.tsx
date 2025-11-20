@@ -1,25 +1,39 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useCompass } from '../../contexts/CompassContext';
 import { compassProducts, filterProducts } from '../../data/compassProducts';
+import { extractCategories } from '../../utils/searchIntentDetection';
+import {
+  parseRefinementRequest,
+  generateConfirmationMessage,
+  applyRefinementActions,
+  FilterState,
+} from '../../utils/conversationPatternMatcher';
 import CompassMessage from './CompassMessage';
 import CompassInput from './CompassInput';
 
 export default function CompassChat() {
-  const { state, addMessage, addProductToSelection, removeProductFromSelection } = useCompass();
+  const { state, addMessage, addProductToSelection, removeProductFromSelection, clearInitialQuery } = useCompass();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isThinking, setIsThinking] = useState(false);
+  const [currentFilters, setCurrentFilters] = useState<FilterState>({
+    categories: { Snacks: 3, Beverages: 3, 'Bath Products': 3 },
+    includeTags: ['nyc-local', 'premium'],
+    excludeTags: [],
+  });
 
-  // Auto-scroll to bottom when new messages arrive
+  // Removed auto-scroll to avoid jarring experience when opening Compass
+
+  // Auto-submit query when opened from search
   useEffect(() => {
-    // Delay scroll slightly to allow content to render
-    const timer = setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, [state.messages.length]);
+    if (state.entryPoint === 'search' &&
+        state.initialQuery &&
+        state.messages.length === 0) {
+      // Auto-submit the query
+      handleSendMessage(state.initialQuery);
+      // Clear the initial query after submitting
+      clearInitialQuery();
+    }
+  }, [state.entryPoint, state.initialQuery, state.messages.length]);
 
   const handleSendMessage = (content: string) => {
     // Add user message
@@ -41,28 +55,60 @@ export default function CompassChat() {
   };
 
   const handleAssistantResponse = (userInput: string) => {
-    // For prototype: Always show categorized hotel products response
-    
-    // Get products by category
+    // Check if this is a refinement request (conversation already started)
+    const isRefinementRequest = state.messages.length > 0;
+
+    if (isRefinementRequest) {
+      // Parse refinement patterns
+      const actions = parseRefinementRequest(userInput);
+
+      // If it's a refinement action, apply filters and show updated results
+      if (actions.length > 0 && actions[0].type !== 'unknown') {
+        const newFilters = applyRefinementActions(actions, currentFilters);
+        setCurrentFilters(newFilters);
+
+        // Generate confirmation message
+        const confirmation = generateConfirmationMessage(actions);
+
+        // Add confirmation message
+        addMessage({
+          role: 'assistant',
+          content: confirmation,
+        });
+
+        // Show updated results after confirmation
+        setTimeout(() => {
+          showFilteredResults(newFilters);
+        }, 800);
+
+        return;
+      }
+    }
+
+    // Initial search flow: Extract categories and show results
+    const detectedCategories = extractCategories(userInput);
+
+    // Get products by category using current filters
     const snacks = filterProducts(compassProducts, {
       categories: ['snack'],
-      tags: ['nyc-local', 'premium'],
-    }).slice(0, 3);
+      tags: currentFilters.includeTags,
+    }).slice(0, currentFilters.categories['Snacks'] || 3);
 
     const beverages = filterProducts(compassProducts, {
       categories: ['beverage'],
-      tags: ['nyc-local', 'premium'],
-    }).slice(0, 3);
+      tags: currentFilters.includeTags,
+    }).slice(0, currentFilters.categories['Beverages'] || 3);
 
     const soaps = filterProducts(compassProducts, {
       categories: ['soap'],
-      tags: ['nyc-local', 'premium'],
-    }).slice(0, 3);
+      tags: currentFilters.includeTags,
+    }).slice(0, currentFilters.categories['Bath Products'] || 3);
 
     addMessage({
       role: 'assistant',
       content: "I found a curated selection of NYC-local products perfect for your hotel rooms. I've organized them by category—food items, beverages, and bath products.",
       interpretation: "Sourcing NYC-local brands across food, beverages, and soaps with premium packaging suitable for in-room amenities",
+      categories: detectedCategories.length > 0 ? detectedCategories : ['Snacks', 'Beverages', 'Bath Products'],
       productsByCategory: [
         { category: 'Food Items', products: snacks },
         { category: 'Beverages', products: beverages },
@@ -70,14 +116,49 @@ export default function CompassChat() {
       ],
     });
 
-    // Add follow-up message after products have been revealed (after all 3 categories animate in)
+    // Add follow-up message after products have been revealed
     setTimeout(() => {
       addMessage({
         role: 'assistant',
         content: "What do you think? Add items to your cart or let me know what you want me to adjust in my search criteria.",
-        chips: ['Adjust selection', 'Check brand minimums', 'Filter by tray size'],
+        chips: ['Show more snacks', 'No plastic', 'Local brands only'],
       });
-    }, 2000); // Wait for all categories to appear (3 categories * 400ms + buffer)
+    }, 2000);
+  };
+
+  const showFilteredResults = (filters: FilterState) => {
+    // Get filtered products by category
+    const snacks = filterProducts(compassProducts, {
+      categories: ['snack'],
+      tags: filters.includeTags,
+    })
+      .filter((p) => !filters.excludeTags.some((tag) => p.tags.includes(tag)))
+      .slice(0, filters.categories['Snacks'] || 3);
+
+    const beverages = filterProducts(compassProducts, {
+      categories: ['beverage'],
+      tags: filters.includeTags,
+    })
+      .filter((p) => !filters.excludeTags.some((tag) => p.tags.includes(tag)))
+      .slice(0, filters.categories['Beverages'] || 3);
+
+    const soaps = filterProducts(compassProducts, {
+      categories: ['soap'],
+      tags: filters.includeTags,
+    })
+      .filter((p) => !filters.excludeTags.some((tag) => p.tags.includes(tag)))
+      .slice(0, filters.categories['Bath Products'] || 3);
+
+    const results = [];
+    if (snacks.length > 0) results.push({ category: 'Food Items', products: snacks });
+    if (beverages.length > 0) results.push({ category: 'Beverages', products: beverages });
+    if (soaps.length > 0) results.push({ category: 'Bath Products', products: soaps });
+
+    addMessage({
+      role: 'assistant',
+      content: `Here are your updated results.`,
+      productsByCategory: results,
+    });
   };
 
   const handleProductSelect = (productId: string) => {
@@ -191,6 +272,7 @@ export default function CompassChat() {
             key={message.id}
             message={message}
             onProductSelect={handleProductSelect}
+            onChipClick={handleSendMessage}
             selectedProductIds={state.selectedProducts.map(p => p.id)}
           />
         ))}

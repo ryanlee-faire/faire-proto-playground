@@ -29,20 +29,20 @@ export default function CompassSidePanel() {
               fill="none"
               stroke="#333333"
             >
-              <circle 
-                cx="12" 
-                cy="12" 
-                r="10" 
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
-              <path 
-                d="M16 8L12 12L8 16L12 12L16 8Z" 
-                fill="#333333" 
+              <path
+                d="M16 8L12 12L8 16L12 12L16 8Z"
+                fill="#333333"
                 stroke="#333333"
                 strokeWidth="1"
-                strokeLinecap="round" 
+                strokeLinecap="round"
                 strokeLinejoin="round"
               />
             </svg>

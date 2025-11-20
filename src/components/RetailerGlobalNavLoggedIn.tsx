@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import SurfacesMenu from "./SurfacesMenu";
 import { useCompass } from "../contexts/CompassContext";
-import SearchDropdown from "./SearchDropdown";
+import SearchDropdown, { SearchDropdownHandle } from "./SearchDropdown";
+import { isConversationalQuery } from "../utils/searchIntentDetection";
 
 // Hook to detect viewport size
 function useViewport() {
@@ -158,27 +159,27 @@ function CompassIcon({ className }: { className?: string }) {
       role="img"
       style={{ color: "#333333", fill: "none", fontSize: "20px" }}
     >
-      <circle 
-        cx="12" 
-        cy="12" 
-        r="10" 
-        stroke="currentColor" 
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path 
-        d="M16 8L12 12L8 16L12 12L16 8Z" 
-        fill="currentColor" 
+      <path
+        d="M16 8L12 12L8 16L12 12L16 8Z"
+        fill="currentColor"
         stroke="currentColor"
         strokeWidth="1"
-        strokeLinecap="round" 
+        strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path 
-        d="M12 2v2M12 20v2M2 12h2M20 12h2" 
-        stroke="currentColor" 
-        strokeWidth="1.5" 
+      <path
+        d="M12 2v2M12 20v2M2 12h2M20 12h2"
+        stroke="currentColor"
+        strokeWidth="1.5"
         strokeLinecap="round"
       />
       <title id="titleAccess-compass">Compass</title>
@@ -208,9 +209,10 @@ export default function RetailerGlobalNavLoggedIn({
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const { togglePanel } = useCompass();
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const searchDropdownRef = useRef<SearchDropdownHandle>(null);
 
-  // Only enable Compass on specific routes (not on index page)
-  const isCompassEnabled = location.pathname !== '/';
+  // Only enable Compass on /template route (Compass prototype)
+  const isCompassEnabled = location.pathname === '/template';
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -236,6 +238,13 @@ export default function RetailerGlobalNavLoggedIn({
   const handleSearchChange = (value: string) => {
     setSearchValue(value);
     setShowSearchDropdown(true);
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && isCompassEnabled && isConversationalQuery(searchValue) && searchDropdownRef.current) {
+      e.preventDefault();
+      searchDropdownRef.current.selectHighlighted();
+    }
   };
 
   // Production bottom nav links
@@ -273,23 +282,25 @@ export default function RetailerGlobalNavLoggedIn({
             <div className="bg-white border border-[#757575] rounded-full flex items-center gap-2 h-10 px-4 pr-5">
               <input
                 id="top-search"
-                placeholder="Search products or brands"
-                aria-label="Search products or brands"
+                placeholder="What are you looking for?"
+                aria-label="What are you looking for?"
                 autoComplete="off"
                 data-test-id="searchBarInput"
                 className="flex-1 bg-transparent border-0 outline-0 text-[#333333] text-sm placeholder:text-[#757575]"
                 value={searchValue}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 onFocus={handleSearchFocus}
+                onKeyDown={handleSearchKeyDown}
               />
               <div className="flex items-center justify-center">
                 <SearchIcon className="w-4 h-4" />
               </div>
             </div>
             {showSearchDropdown && isCompassEnabled && (
-              <SearchDropdown 
-                searchQuery={searchValue} 
-                onClose={() => setShowSearchDropdown(false)} 
+              <SearchDropdown
+                ref={searchDropdownRef}
+                searchQuery={searchValue}
+                onClose={() => setShowSearchDropdown(false)}
               />
             )}
           </div>
@@ -358,14 +369,15 @@ export default function RetailerGlobalNavLoggedIn({
           <div className="absolute bg-white border border-[#757575] rounded-full flex items-center gap-2 h-10 left-4 right-4 px-4 pr-5 top-14">
             <input
               id="top-search"
-              placeholder="Search products or brands"
-              aria-label="Search products or brands"
+              placeholder="Search or use a phrase"
+              aria-label="Search or use a phrase"
               autoComplete="off"
               data-test-id="searchBarInput"
               className="flex-1 bg-transparent border-0 outline-0 text-[#333333] text-sm placeholder:text-[#757575]"
               value={searchValue}
               onChange={(e) => handleSearchChange(e.target.value)}
               onFocus={handleSearchFocus}
+              onKeyDown={handleSearchKeyDown}
             />
             <div className="flex items-center justify-center">
               <SearchIcon className="w-4 h-4" />
@@ -373,9 +385,10 @@ export default function RetailerGlobalNavLoggedIn({
           </div>
           {showSearchDropdown && isCompassEnabled && (
             <div className="absolute top-[72px] left-4 right-4">
-              <SearchDropdown 
-                searchQuery={searchValue} 
-                onClose={() => setShowSearchDropdown(false)} 
+              <SearchDropdown
+                ref={searchDropdownRef}
+                searchQuery={searchValue}
+                onClose={() => setShowSearchDropdown(false)}
               />
             </div>
           )}
@@ -516,23 +529,25 @@ export default function RetailerGlobalNavLoggedIn({
           <div className="bg-white border border-[#757575] rounded-full flex items-center h-10 px-4 pr-5">
             <input
               id="top-search"
-              placeholder="Search products or brands"
-              aria-label="Search products or brands"
+              placeholder="Search or use a phrase"
+              aria-label="Search or use a phrase"
               autoComplete="off"
               data-test-id="searchBarInput"
               className="flex-1 bg-transparent border-0 outline-0 text-[#333333] text-sm placeholder:text-[#757575]"
               value={searchValue}
               onChange={(e) => handleSearchChange(e.target.value)}
               onFocus={handleSearchFocus}
+              onKeyDown={handleSearchKeyDown}
             />
             <div className="flex items-center justify-center">
               <SearchIcon className="w-4 h-4" />
             </div>
           </div>
           {showSearchDropdown && isCompassEnabled && (
-            <SearchDropdown 
-              searchQuery={searchValue} 
-              onClose={() => setShowSearchDropdown(false)} 
+            <SearchDropdown
+              ref={searchDropdownRef}
+              searchQuery={searchValue}
+              onClose={() => setShowSearchDropdown(false)}
             />
           )}
         </div>
