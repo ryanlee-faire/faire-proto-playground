@@ -34,6 +34,7 @@ export interface Message {
   categories?: string[]; // Parsed categories to display
   isThinking?: boolean; // Whether this is a "thinking" state message
   isThinkingComplete?: boolean; // Whether thinking is complete and should show compact summary
+  showThinkingDots?: boolean; // Show bouncing dots (initial thinking state)
   thinkingStatus?: string; // Status text for thinking state
   searchingCategories?: string[]; // Categories being searched during thinking
   categorySearchProgress?: { category: string; count?: number; isSearching: boolean }[]; // Progressive search status with counts

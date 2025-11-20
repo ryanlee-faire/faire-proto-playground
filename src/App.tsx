@@ -57,7 +57,7 @@ function AppContent() {
       <div
         className="compass-content-wrapper"
         style={{
-          marginRight: compassState.isPanelOpen ? '480px' : '0',
+          marginRight: compassState.isPanelOpen ? '385px' : '0',
           transition: 'margin-right 350ms cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >

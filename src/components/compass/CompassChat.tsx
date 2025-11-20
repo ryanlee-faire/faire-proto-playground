@@ -42,16 +42,10 @@ export default function CompassChat() {
       content,
     });
 
-    // Small delay then show thinking indicator
+    // Show thinking state, then transition to working state
     setTimeout(() => {
-      setIsThinking(true);
-    }, 300);
-
-    // Simulate "thinking" delay before response
-    setTimeout(() => {
-      setIsThinking(false);
       handleAssistantResponse(content.toLowerCase());
-    }, 1500);
+    }, 300);
   };
 
   const handleAssistantResponse = (userInput: string) => {
@@ -85,16 +79,26 @@ export default function CompassChat() {
       }
     }
 
-    // Show "thinking" state first with initial progress
+    // Show "working" state - start with just the heading
     const thinkingMessage = {
       role: 'assistant' as const,
       content: 'Working...',
       isThinking: true,
-      thinkingStatus: `Searching for products that fit "${userInput}" across multiple categories`,
+      thinkingStatus: '', // Start empty
       categorySearchProgress: [],
+      showThinkingDots: false,
     };
     const addedMessage = addMessage(thinkingMessage);
     thinkingMessageIdRef.current = addedMessage.id;
+
+    // After 400ms, reveal the status text
+    setTimeout(() => {
+      if (thinkingMessageIdRef.current) {
+        updateMessage(thinkingMessageIdRef.current, {
+          thinkingStatus: `Searching for products that fit "${userInput}" across multiple categories`,
+        });
+      }
+    }, 400);
 
     // Animate through categories progressively - ONE AT A TIME
     const categories = ['Snacks', 'Beverages', 'Bath Products', 'Accessories'];
@@ -102,6 +106,7 @@ export default function CompassChat() {
 
     categories.forEach((category, index) => {
       // First, show the category appearing with searching state
+      // Add 600ms delay to let status text appear first
       setTimeout(() => {
         if (thinkingMessageIdRef.current) {
           // Build progress array showing only categories up to current index
@@ -131,10 +136,10 @@ export default function CompassChat() {
             });
           }
         }, 400);
-      }, index * 700);
+      }, 600 + index * 700); // 600ms for status text + 700ms per category
     });
 
-    // After all categories are searched, collapse the thinking message and show results
+    // After all categories are searched, collapse to summary
     setTimeout(() => {
       // Mark thinking message as complete with compact summary
       if (thinkingMessageIdRef.current) {
@@ -145,6 +150,19 @@ export default function CompassChat() {
           totalProductsReviewed: totalProducts,
         });
       }
+    }, 600 + categories.length * 700 + 800); // Wait for status text + all animations
+
+    // Show intro message with empty products first
+    const resultsMessageBaseTime = 600 + categories.length * 700 + 800 + 600; // Status + animations + summary pause
+    setTimeout(() => {
+      const resultsMessage = addMessage({
+        role: 'assistant',
+        content: `Based on your search, I've found a handful of items that might be a great fit. Feel free to take a look or refine your search by telling me more about what you had in mind.`,
+        productsByCategory: [], // Start empty
+      });
+      
+      // Store message ID for progressive updates
+      const resultsMessageId = resultsMessage.id;
 
       // Get products by category using current filters
       const snacks = filterProducts(compassProducts, {
@@ -162,25 +180,30 @@ export default function CompassChat() {
         tags: currentFilters.includeTags,
       }).slice(0, currentFilters.categories['Bath Products'] || 6);
 
-      addMessage({
-        role: 'assistant',
-        content: `Based on your search, I've found a handful of items that might be a great fit. Feel free to take a look or refine your search by telling me more about what you had in mind.`,
-        productsByCategory: [
-          { category: 'Food Items', products: snacks },
-          { category: 'Beverages', products: beverages },
-          { category: 'Bath Products', products: soaps },
-        ],
-      });
-    }, categories.length * 700 + 800); // Wait for all animations (700ms per category + 400ms for last count + buffer)
+      const allCategories = [
+        { category: 'Food Items', products: snacks },
+        { category: 'Beverages', products: beverages },
+        { category: 'Bath Products', products: soaps },
+      ];
 
-    // Add follow-up chips after products have been revealed
+      // Progressively reveal each category
+      allCategories.forEach((categoryData, index) => {
+        setTimeout(() => {
+          updateMessage(resultsMessageId, {
+            productsByCategory: allCategories.slice(0, index + 1),
+          });
+        }, 800 + index * 600); // 800ms initial pause, then 600ms between each category
+      });
+    }, resultsMessageBaseTime);
+
+    // Add follow-up message with refinement options after all categories have been revealed
     setTimeout(() => {
       addMessage({
         role: 'assistant',
-        content: "",
-        chips: ['Show more snacks', 'No plastic', 'Local brands only'],
+        content: "These are some of my recommendations but I'm happy to refine. Just let me know what you are looking for.",
+        chips: ['Show more snacks', 'Show local brands only', 'More options'],
       });
-    }, categories.length * 700 + 3300); // Wait for animations + products to appear
+    }, resultsMessageBaseTime + 800 + (3 * 600) + 800); // After all categories + buffer
   };
 
   const showFilteredResults = (filters: FilterState) => {
@@ -335,22 +358,6 @@ export default function CompassChat() {
             selectedProductIds={state.selectedProducts.map(p => p.id)}
           />
         ))}
-        
-        {/* Thinking indicator */}
-        {isThinking && (
-          <div className="flex mb-6 px-6">
-            <div className="max-w-[85%] bg-[#f5f5f5] text-[#333333] px-4 py-3 rounded-2xl rounded-tl-sm">
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1">
-                  <span className="w-2 h-2 bg-[#757575] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                  <span className="w-2 h-2 bg-[#757575] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                  <span className="w-2 h-2 bg-[#757575] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                </div>
-                <span className="text-sm text-[#757575]">Compass is thinking...</span>
-              </div>
-            </div>
-          </div>
-        )}
         
         <div ref={messagesEndRef} />
       </div>

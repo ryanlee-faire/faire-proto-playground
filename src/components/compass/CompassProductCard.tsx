@@ -49,7 +49,7 @@ export default function CompassProductCard({
 
   return (
     <div
-      className={`relative w-full cursor-pointer transition-all ${
+      className={`relative w-full cursor-pointer transition-all group ${
         isSelected ? 'ring-2 ring-[#333333] rounded' : ''
       }`}
       onClick={handleClick}
@@ -74,18 +74,18 @@ export default function CompassProductCard({
           }}
         />
 
-        {/* Add to Cart Button */}
+        {/* Add to Cart Button - bottom left, shows on hover */}
         <button
           onClick={handleAddToCart}
-          className="absolute top-2 right-2 z-10 bg-white text-[#333333] rounded-full p-2 shadow-md hover:bg-[#333333] hover:text-white transition-colors"
+          className="absolute bottom-2 left-2 z-10 bg-white text-[#333333] rounded-full p-1.5 shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-[#333333] hover:text-white"
           aria-label={isInCart ? "In cart" : "Add to cart"}
         >
           {isInCart ? (
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
               <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           ) : (
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           )}
@@ -93,17 +93,7 @@ export default function CompassProductCard({
       </div>
 
       {/* Product Info - more compact than BrandTile */}
-      <div className="relative -mt-4 flex flex-col items-start px-1 z-10">
-        {product.brandAvatarUrl && (
-          <div className="outline outline-2 outline-white rounded-full overflow-hidden bg-white">
-            <img
-              src={product.brandAvatarUrl}
-              alt={`${product.brandName} avatar`}
-              className="w-8 h-8 rounded-full object-cover"
-            />
-          </div>
-        )}
-        <div style={{ height: "2px", width: "0px" }} />
+      <div className="relative mt-2 flex flex-col items-start px-1">
         <p className="text-xs font-medium text-[#333333] w-full truncate">{product.name}</p>
         <p className="text-xs text-[#757575] w-full truncate">{product.brandName}</p>
         
