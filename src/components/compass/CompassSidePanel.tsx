@@ -5,7 +5,6 @@ import CompassCartSummary from './CompassCartSummary';
 
 export default function CompassSidePanel() {
   const { state, closePanel, clearMessages } = useCompass();
-  const [isPanelFocused, setIsPanelFocused] = React.useState(false);
   const [showHistoryDropdown, setShowHistoryDropdown] = React.useState(false);
 
   // Auto-generate conversation title from first user message
@@ -32,37 +31,6 @@ export default function CompassSidePanel() {
     'Home & living items',
   ];
 
-  // Lock/unlock body scroll based on panel focus
-  React.useEffect(() => {
-    if (state.isPanelOpen && isPanelFocused) {
-      // Panel is focused - prevent body scroll
-      document.body.style.overflow = 'hidden';
-    } else {
-      // Panel not focused or closed - allow body scroll
-      document.body.style.overflow = '';
-    }
-
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [state.isPanelOpen, isPanelFocused]);
-
-  // Detect clicks outside panel to unfocus it
-  React.useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const panel = document.querySelector('[data-compass-panel]');
-      if (panel && !panel.contains(target)) {
-        setIsPanelFocused(false);
-      }
-    };
-
-    if (state.isPanelOpen) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
-    }
-  }, [state.isPanelOpen]);
-
   return (
     <>
       {/* Side Panel */}
@@ -77,7 +45,6 @@ export default function CompassSidePanel() {
           pointerEvents: state.isPanelOpen ? 'auto' : 'none',
           overscrollBehavior: 'contain',
         }}
-        onClick={() => setIsPanelFocused(true)}
       >
         {/* Header */}
         <div className="flex flex-col">
