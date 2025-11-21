@@ -127,7 +127,7 @@ export default function IndexPage() {
                     <span className="text-xs bg-[#333333] text-white px-2 py-0.5 rounded">Ryan</span>
                   </div>
                   <p className="text-sm text-[#757575] mt-1">
-                    Full surface page for Compass interface
+                    Full surface page for Compass interface (Cristi)
                   </p>
                 </li>
               </ul>
