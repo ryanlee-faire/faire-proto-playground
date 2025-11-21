@@ -13,6 +13,7 @@ import ComponentShowcasePage from "./pages/ComponentShowcasePage";
 import NewPage from "./pages/NewPage";
 import BrandPage from "./pages/BrandPage";
 import CompassFullSurfacePage from "./pages/CompassFullSurfacePage";
+import SearchResultsPage from "./pages/SearchResultsPage";
 import ProductsPage from "./pages/faire/ProductsPage";
 import BulkEditorPage from "./pages/faire/BulkEditorPage";
 import GridOverlay from "./components/GridOverlay";
@@ -77,6 +78,7 @@ function AppContent() {
         <Route path="/template" element={<RouteWrapper><TemplatePage /></RouteWrapper>} />
         <Route path="/new-page" element={<RouteWrapper><NewPage /></RouteWrapper>} />
         <Route path="/brand" element={<RouteWrapper><BrandPage /></RouteWrapper>} />
+        <Route path="/search-results" element={<RouteWrapper><SearchResultsPage /></RouteWrapper>} />
         <Route path="/compass-full-surface" element={<RouteWrapper><CompassFullSurfacePage /></RouteWrapper>} />
         <Route path="/pdp" element={<RouteWrapper><ProductDetailPage /></RouteWrapper>} />
         <Route path="/pdp-v2" element={<RouteWrapper><ProductDetailPageV2 /></RouteWrapper>} />

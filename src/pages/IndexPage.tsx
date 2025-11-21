@@ -10,6 +10,7 @@ export default function IndexPage() {
   const [isExperimentalOpen, setIsExperimentalOpen] = useState(true);
   const [isTemplatesOpen, setIsTemplatesOpen] = useState(true);
   const [isComponentsOpen, setIsComponentsOpen] = useState(false);
+  const [isProjectCompassOpen, setIsProjectCompassOpen] = useState(true);
 
   const ChevronIcon = ({ isOpen }: { isOpen: boolean }) => (
     <svg
@@ -91,16 +92,16 @@ export default function IndexPage() {
           {/* Retailer Experience Section */}
           <h2 className="text-3xl font-semibold text-gray-800 mb-4 mt-12">Retailer</h2>
           
-          {/* Experimental Section */}
+          {/* Project Compass Section */}
           <div className="mb-6">
             <button
-              onClick={() => setIsExperimentalOpen(!isExperimentalOpen)}
+              onClick={() => setIsProjectCompassOpen(!isProjectCompassOpen)}
               className="flex items-center gap-2 w-full text-left mb-4 hover:opacity-70 transition-opacity"
             >
-              <ChevronIcon isOpen={isExperimentalOpen} />
-              <h3 className="text-2xl font-semibold text-gray-800">Experimental</h3>
+              <ChevronIcon isOpen={isProjectCompassOpen} />
+              <h3 className="text-2xl font-semibold text-gray-800">Project Compass</h3>
             </button>
-            {isExperimentalOpen && (
+            {isProjectCompassOpen && (
               <ul className="space-y-4 ml-6">
                 <li>
                   <div className="flex items-center gap-2">
@@ -130,6 +131,44 @@ export default function IndexPage() {
                     Full surface page for Compass interface (Cristi)
                   </p>
                 </li>
+                <li>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to="/pdp-with-drawer"
+                      className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                    >
+                      PDP with drawer
+                    </Link>
+                    <span className="text-xs bg-[#333333] text-white px-2 py-0.5 rounded">Ryan</span>
+                  </div>
+                </li>
+                <li>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to="/pdp-with-drawer-left"
+                      className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                    >
+                      PDP with drawer (left)
+                    </Link>
+                    <span className="text-xs bg-[#333333] text-white px-2 py-0.5 rounded">Ryan</span>
+                  </div>
+                </li>
+              </ul>
+            )}
+          </div>
+
+          {/* Experimental Section */}
+          <div className="mb-6">
+            <button
+              onClick={() => setIsExperimentalOpen(!isExperimentalOpen)}
+              className="flex items-center gap-2 w-full text-left mb-4 hover:opacity-70 transition-opacity"
+            >
+              <ChevronIcon isOpen={isExperimentalOpen} />
+              <h3 className="text-2xl font-semibold text-gray-800">Experimental</h3>
+            </button>
+            {isExperimentalOpen && (
+              <ul className="space-y-4 ml-6">
+                {/* Empty for now - Compass items moved to Project Compass section */}
               </ul>
             )}
           </div>
@@ -145,17 +184,22 @@ export default function IndexPage() {
             </button>
             {isTemplatesOpen && (
               <ul className="space-y-4 ml-6">
-                {surfaces.map((surface) => (
-                  <li key={surface.path} className="flex items-center gap-2">
-                    <a
-                      href={surface.path}
-                      className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
-                    >
-                      {surface.name}
-                    </a>
-                    <span className="text-xs bg-[#333333] text-white px-2 py-0.5 rounded">Ryan</span>
-                  </li>
-                ))}
+                {surfaces
+                  .filter((surface) => 
+                    surface.path !== "/pdp-with-drawer" && 
+                    surface.path !== "/pdp-with-drawer-left"
+                  )
+                  .map((surface) => (
+                    <li key={surface.path} className="flex items-center gap-2">
+                      <a
+                        href={surface.path}
+                        className="text-lg text-[#333333] hover:text-[#757575] hover:underline transition-colors duration-500 ease-in-out"
+                      >
+                        {surface.name}
+                      </a>
+                      <span className="text-xs bg-[#333333] text-white px-2 py-0.5 rounded">Ryan</span>
+                    </li>
+                  ))}
               </ul>
             )}
           </div>
