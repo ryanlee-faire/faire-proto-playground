@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Security } from "@okta/okta-react";
 import IndexPage from "./pages/IndexPage";
 import TemplatePage from "./pages/TemplatePage";
+import CategoryPage from "./pages/CategoryPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import ProductDetailPageV2 from "./pages/ProductDetailPageV2";
 import ProductDetailPageWithDrawer from "./pages/ProductDetailPageWithDrawer";
@@ -76,6 +77,7 @@ function AppContent() {
         <Route path="/login/callback" element={<LoginCallback />} />
         <Route path="/" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
         <Route path="/template" element={<RouteWrapper><TemplatePage /></RouteWrapper>} />
+        <Route path="/category/:categoryName" element={<RouteWrapper><CategoryPage /></RouteWrapper>} />
         <Route path="/new-page" element={<RouteWrapper><NewPage /></RouteWrapper>} />
         <Route path="/brand" element={<RouteWrapper><BrandPage /></RouteWrapper>} />
         <Route path="/search-results" element={<RouteWrapper><SearchResultsPage /></RouteWrapper>} />

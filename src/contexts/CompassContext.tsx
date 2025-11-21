@@ -31,6 +31,17 @@ export interface Message {
   productsByCategory?: { category: string; products: CompassProduct[] }[]; // Products organized by category
   chips?: string[]; // Suggestion chips to show
   interpretation?: string; // System interpretation text
+  categories?: string[]; // Parsed categories to display
+  isThinking?: boolean; // Whether this is a "thinking" state message
+  isThinkingComplete?: boolean; // Whether thinking is complete and should show compact summary
+  showThinkingDots?: boolean; // Show bouncing dots (initial thinking state)
+  thinkingStatus?: string; // Status text for thinking state
+  searchingCategories?: string[]; // Categories being searched during thinking
+  categorySearchProgress?: { category: string; count?: number; isSearching: boolean }[]; // Progressive search status with counts
+  totalProductsReviewed?: number; // Total number of products reviewed for compact summary
+  isCategorySpecific?: boolean; // Whether this is a single-category refinement
+  specificCategoryName?: string; // Name of the specific category for refinements
+  productContext?: CompassProduct; // Product being asked about in this message
   timestamp: Date;
 }
 
@@ -54,15 +65,20 @@ export interface CompassState {
   cartItems: CartItem[]; // Cart with quantities
   entryPoint?: 'icon' | 'search'; // Track how user opened Compass
   currentProduct?: CompassProduct; // Product being viewed on PDP
+  currentCategory?: string; // Category being viewed (from "See all")
+  pairedProducts?: CompassProduct[]; // Paired products for "Paired Products" category
+  initialQuery?: string; // Query passed from search bar
 }
 
 interface CompassContextType {
   state: CompassState;
-  openPanel: (entryPoint?: 'icon' | 'search') => void;
+  openPanel: (entryPoint?: 'icon' | 'search', initialQuery?: string) => void;
   closePanel: () => void;
   togglePanel: () => void;
-  addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
+  addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => Message;
+  updateMessage: (messageId: string, updates: Partial<Message>) => void;
   clearMessages: () => void;
+  clearInitialQuery: () => void;
   addProductToSelection: (product: CompassProduct) => void;
   removeProductFromSelection: (productId: string) => void;
   updateConstraints: (constraints: Partial<CompassState['activeConstraints']>) => void;
@@ -73,7 +89,11 @@ interface CompassContextType {
   getCartTotal: () => number;
   getCartItemsByBrand: () => Record<string, CartItem[]>;
   // Product viewing
-  setCurrentProduct: (product: CompassProduct) => void;
+  setCurrentProduct: (product: CompassProduct | undefined) => void;
+  // Category viewing
+  setCurrentCategory: (category: string | undefined) => void;
+  // Paired products
+  setPairedProducts: (products: CompassProduct[] | undefined) => void;
 }
 
 const CompassContext = createContext<CompassContextType | undefined>(undefined);
@@ -87,10 +107,13 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     cartItems: [],
     entryPoint: undefined,
     currentProduct: undefined,
+    currentCategory: undefined,
+    pairedProducts: undefined,
+    initialQuery: undefined,
   });
 
-  const openPanel = (entryPoint: 'icon' | 'search' = 'icon') => {
-    setState(prev => ({ ...prev, isPanelOpen: true, entryPoint }));
+  const openPanel = (entryPoint: 'icon' | 'search' = 'icon', initialQuery?: string) => {
+    setState(prev => ({ ...prev, isPanelOpen: true, entryPoint, initialQuery }));
   };
 
   const closePanel = () => {
@@ -101,7 +124,7 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, isPanelOpen: !prev.isPanelOpen }));
   };
 
-  const addMessage = (message: Omit<Message, 'id' | 'timestamp'>) => {
+  const addMessage = (message: Omit<Message, 'id' | 'timestamp'>): Message => {
     const newMessage: Message = {
       ...message,
       id: `msg-${Date.now()}-${Math.random()}`,
@@ -111,6 +134,16 @@ export function CompassProvider({ children }: { children: ReactNode }) {
       ...prev,
       messages: [...prev.messages, newMessage],
     }));
+    return newMessage;
+  };
+
+  const updateMessage = (messageId: string, updates: Partial<Message>) => {
+    setState(prev => ({
+      ...prev,
+      messages: prev.messages.map(msg =>
+        msg.id === messageId ? { ...msg, ...updates } : msg
+      ),
+    }));
   };
 
   const clearMessages = () => {
@@ -119,6 +152,16 @@ export function CompassProvider({ children }: { children: ReactNode }) {
       messages: [],
       activeConstraints: {},
       selectedProducts: [],
+      currentProduct: undefined, // Clear product context when starting new conversation
+      currentCategory: undefined, // Clear category context when starting new conversation
+      pairedProducts: undefined, // Clear paired products when starting new conversation
+    }));
+  };
+
+  const clearInitialQuery = () => {
+    setState(prev => ({
+      ...prev,
+      initialQuery: undefined,
     }));
   };
 
@@ -208,10 +251,28 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     }, {} as Record<string, CartItem[]>);
   };
 
-  const setCurrentProduct = (product: CompassProduct) => {
+  const setCurrentProduct = (product: CompassProduct | undefined) => {
     setState(prev => ({
       ...prev,
       currentProduct: product,
+      // Clear category when product is set
+      currentCategory: product ? undefined : prev.currentCategory,
+    }));
+  };
+
+  const setCurrentCategory = (category: string | undefined) => {
+    setState(prev => ({
+      ...prev,
+      currentCategory: category,
+      // Always clear product when category is set (no special cases)
+      currentProduct: category ? undefined : prev.currentProduct,
+    }));
+  };
+
+  const setPairedProducts = (products: CompassProduct[] | undefined) => {
+    setState(prev => ({
+      ...prev,
+      pairedProducts: products,
     }));
   };
 
@@ -221,7 +282,9 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     closePanel,
     togglePanel,
     addMessage,
+    updateMessage,
     clearMessages,
+    clearInitialQuery,
     addProductToSelection,
     removeProductFromSelection,
     updateConstraints,
@@ -231,6 +294,8 @@ export function CompassProvider({ children }: { children: ReactNode }) {
     getCartTotal,
     getCartItemsByBrand,
     setCurrentProduct,
+    setCurrentCategory,
+    setPairedProducts,
   };
 
   return (

@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import SurfacesMenu from "./SurfacesMenu";
 import { useCompass } from "../contexts/CompassContext";
-import SearchDropdown from "./SearchDropdown";
+import SearchDropdown, { SearchDropdownHandle } from "./SearchDropdown";
+import { isConversationalQuery } from "../utils/searchIntentDetection";
 
 // Hook to detect viewport size
 function useViewport() {
@@ -153,33 +154,16 @@ function CompassIcon({ className }: { className?: string }) {
     <svg
       className={className}
       focusable="false"
-      viewBox="0 0 24 24"
+      width="25"
+      height="25"
+      viewBox="0 0 28 25"
       aria-labelledby="titleAccess-compass"
       role="img"
-      style={{ color: "#333333", fill: "none", fontSize: "20px" }}
+      style={{ color: "#333333", fontSize: "25px" }}
     >
-      <circle 
-        cx="12" 
-        cy="12" 
-        r="10" 
-        stroke="currentColor" 
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path 
-        d="M16 8L12 12L8 16L12 12L16 8Z" 
-        fill="currentColor" 
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeLinecap="round" 
-        strokeLinejoin="round"
-      />
-      <path 
-        d="M12 2v2M12 20v2M2 12h2M20 12h2" 
-        stroke="currentColor" 
-        strokeWidth="1.5" 
-        strokeLinecap="round"
+      <path
+        d="M15.5 9.5L15.9642 9.6857L16.3975 8.60247L15.3143 9.03576L15.5 9.5ZM3 14.5L2.8143 14.0358L2.93798 14.9961L3 14.5ZM9.66667 15.3333L10.1628 15.2713L10.1146 14.8854L9.72868 14.8372L9.66667 15.3333ZM10.5 22L10.0039 22.062L10.9642 22.1857L10.5 22ZM22 0.5C22 0.223858 21.7761 0 21.5 0C21.2239 0 21 0.223858 21 0.5H21.5H22ZM25.5 5C25.7761 5 26 4.77614 26 4.5C26 4.22386 25.7761 4 25.5 4V4.5V5ZM21.5 8.5H21C21 8.77172 21.217 8.9937 21.4886 8.99987C21.7603 9.00604 21.9871 8.79414 21.9995 8.5227L21.5 8.5ZM17.5 4C17.2239 4 17 4.22386 17 4.5C17 4.77614 17.2239 5 17.5 5V4.5V4ZM26 10.5C26 10.2239 25.7761 10 25.5 10C25.2239 10 25 10.2239 25 10.5H25.5H26ZM27.5 13C27.7761 13 28 12.7761 28 12.5C28 12.2239 27.7761 12 27.5 12V12.5V13ZM25.5 14.5H25C25 14.7717 25.217 14.9937 25.4886 14.9999C25.7603 15.006 25.9871 14.7941 25.9995 14.5227L25.5 14.5ZM23.5 12C23.2239 12 23 12.2239 23 12.5C23 12.7761 23.2239 13 23.5 13V12.5V12ZM20.5 14.5H20C20 19.7467 15.7467 24 10.5 24V24.5V25C16.299 25 21 20.299 21 14.5H20.5ZM10.5 24.5V24C5.25329 24 1 19.7467 1 14.5H0.5H0C0 20.299 4.70101 25 10.5 25V24.5ZM0.5 14.5H1C1 9.25329 5.25329 5 10.5 5V4.5V4C4.70101 4 0 8.70101 0 14.5H0.5ZM10.5 4.5V5C15.7467 5 20 9.25329 20 14.5H20.5H21C21 8.70101 16.299 4 10.5 4V4.5ZM15.5 9.5L15.3143 9.03576L2.8143 14.0358L3 14.5L3.1857 14.9642L15.6857 9.96424L15.5 9.5ZM3 14.5L2.93798 14.9961L9.60465 15.8295L9.66667 15.3333L9.72868 14.8372L3.06202 14.0039L3 14.5ZM9.66667 15.3333L9.17053 15.3954L10.0039 22.062L10.5 22L10.9961 21.938L10.1628 15.2713L9.66667 15.3333ZM10.5 22L10.9642 22.1857L15.9642 9.6857L15.5 9.5L15.0358 9.3143L10.0358 21.8143L10.5 22ZM21.5 0.5H21C21 1.85977 21.3081 3.00935 22.0799 3.8162C22.8557 4.62733 24.0113 5 25.5 5V4.5V4C24.1651 4 23.3208 3.66679 22.8025 3.12498C22.2802 2.57889 22 1.72846 22 0.5H21.5ZM25.5 4.5V4C24.1156 4 22.9989 4.37954 22.2161 5.17976C21.4388 5.97438 21.0626 7.1107 21.0005 8.4773L21.5 8.5L21.9995 8.5227C22.055 7.30106 22.3848 6.43739 22.9309 5.87906C23.4716 5.32634 24.2961 5 25.5 5V4.5ZM21.5 8.5H22C22 7.19357 21.6894 6.0496 20.9238 5.23182C20.1525 4.40789 18.9995 4 17.5 4V4.5V5C18.824 5 19.671 5.35682 20.1938 5.91524C20.7223 6.47981 21 7.33584 21 8.5H21.5ZM17.5 4.5V5C18.8598 5 20.0093 4.69192 20.8162 3.92014C21.6273 3.14428 22 1.98867 22 0.5H21.5H21C21 1.83486 20.6668 2.67925 20.125 3.1975C19.5789 3.71985 18.7285 4 17.5 4V4.5ZM25.5 10.5H25C25 11.2127 25.161 11.8623 25.6093 12.3309C26.0616 12.8038 26.7172 13 27.5 13V12.5V12C26.871 12 26.5266 11.8433 26.3319 11.6397C26.1331 11.4318 26 11.0814 26 10.5H25.5ZM27.5 12.5V12C26.7627 12 26.1313 12.2031 25.6793 12.6651C25.2329 13.1214 25.0332 13.7578 25.0005 14.4773L25.5 14.5L25.9995 14.5227C26.0256 13.9481 26.1789 13.5844 26.3942 13.3644C26.604 13.1499 26.9432 13 27.5 13V12.5ZM25.5 14.5H26C26 13.8112 25.8365 13.1672 25.3944 12.6951C24.9466 12.2167 24.2937 12 23.5 12V12.5V13C24.1181 13 24.4652 13.1656 24.6644 13.3785C24.8694 13.5975 25 13.9535 25 14.5H25.5ZM23.5 12.5V13C24.2127 13 24.8623 12.839 25.3309 12.3907C25.8038 11.9384 26 11.2828 26 10.5H25.5H25C25 11.129 24.8433 11.4734 24.6397 11.6681C24.4318 11.8669 24.0814 12 23.5 12V12.5Z"
+        fill="#333333"
       />
       <title id="titleAccess-compass">Compass</title>
     </svg>
@@ -208,13 +192,53 @@ export default function RetailerGlobalNavLoggedIn({
   const detectedDevice = useViewport();
   const currentDevice = device || detectedDevice;
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
-  const { togglePanel } = useCompass();
+  const { togglePanel, openPanel, clearMessages, closePanel, state } = useCompass();
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const searchDropdownRef = useRef<SearchDropdownHandle>(null);
 
-  // Only enable Compass on specific routes (not on index page)
-  const isCompassEnabled = location.pathname !== '/';
+  // Dev shortcut: Click bell to open Compass with preset query
+  const handleNotificationClick = () => {
+    if (isCompassEnabled) {
+      openPanel('search', 'New York City hotel room gifts for guests');
+    }
+  };
+
+  // Reset prototype to beginning when clicking person icon
+  const handleProfileClick = useCallback(() => {
+    // Close panel first
+    closePanel();
+    // Clear all Compass state first
+    clearMessages();
+    // Navigate to home page (use replace to avoid back button issues)
+    navigate('/template', { replace: true });
+  }, [closePanel, clearMessages, navigate]);
+
+  // Enable Compass on both prototypes' routes
+  const isCompassEnabled = 
+    location.pathname === '/template' ||
+    location.pathname.startsWith('/category/') ||
+    location.pathname === '/pdp' ||
+    location.pathname === '/compass-full-surface' ||
+    location.pathname === '/pdp-with-drawer' ||
+    location.pathname === '/pdp-with-drawer-left';
+
+  // Keyboard shortcut: CMD/CTRL + Shift + R to restart prototype
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'r') {
+        e.preventDefault();
+        handleProfileClick();
+      }
+    };
+
+    if (isCompassEnabled) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isCompassEnabled, handleProfileClick]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -242,6 +266,13 @@ export default function RetailerGlobalNavLoggedIn({
     setShowSearchDropdown(true);
   };
 
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && isCompassEnabled && isConversationalQuery(searchValue) && searchDropdownRef.current) {
+      e.preventDefault();
+      searchDropdownRef.current.selectHighlighted();
+    }
+  };
+
   // Production bottom nav links
   const bottomNavLinks = [
     { label: "Brand updates", href: "/my-brands/updates", testId: "header-my_brands-dropdown-link" },
@@ -258,7 +289,7 @@ export default function RetailerGlobalNavLoggedIn({
   // Tablet layout
   if (currentDevice === "Tablet") {
     return (
-      <header className="relative z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
+      <header className="relative z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
         <div className="m-auto w-full lg:px-12 lg:pt-4 flex items-center justify-center gap-4 px-4 py-4" style={{ maxWidth: "1920px", width: "100%" }}>
           <button
             aria-label="Menu"
@@ -277,23 +308,25 @@ export default function RetailerGlobalNavLoggedIn({
             <div className="bg-white border border-[#757575] rounded-full flex items-center gap-2 h-10 px-4 pr-5">
               <input
                 id="top-search"
-                placeholder="Search products or brands"
-                aria-label="Search products or brands"
+                placeholder="What are you looking for?"
+                aria-label="What are you looking for?"
                 autoComplete="off"
                 data-test-id="searchBarInput"
                 className="flex-1 bg-transparent border-0 outline-0 text-[#333333] text-sm placeholder:text-[#757575]"
                 value={searchValue}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 onFocus={handleSearchFocus}
+                onKeyDown={handleSearchKeyDown}
               />
               <div className="flex items-center justify-center">
                 <SearchIcon className="w-4 h-4" />
               </div>
             </div>
             {showSearchDropdown && isCompassEnabled && (
-              <SearchDropdown 
-                searchQuery={searchValue} 
-                onClose={() => setShowSearchDropdown(false)} 
+              <SearchDropdown
+                ref={searchDropdownRef}
+                searchQuery={searchValue}
+                onClose={() => setShowSearchDropdown(false)}
               />
             )}
           </div>
@@ -303,12 +336,16 @@ export default function RetailerGlobalNavLoggedIn({
               <button
                 data-test-id="compassButton"
                 onClick={togglePanel}
-                className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
+                className={`bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-all duration-300 ease-in-out ${
+                  state.isPanelOpen 
+                    ? 'opacity-0 scale-95 pointer-events-none' 
+                    : 'opacity-100 scale-100 pointer-events-auto'
+                }`}
                 aria-label="Compass"
                 type="button"
               >
                 <div className="flex items-center justify-center w-10 h-10 relative">
-                  <CompassIcon className="w-5 h-5" />
+                  <CompassIcon className="w-[25px] h-[25px]" />
                 </div>
               </button>
             )}
@@ -317,6 +354,7 @@ export default function RetailerGlobalNavLoggedIn({
               className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
               aria-label="Notifications"
               type="button"
+              onClick={handleNotificationClick}
             >
               <div className="flex items-center justify-center w-10 h-10 relative">
                 <NotificationIcon className="w-5 h-5" />
@@ -327,6 +365,7 @@ export default function RetailerGlobalNavLoggedIn({
               data-test-id="accountDropdown"
               className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
               type="button"
+              onClick={handleProfileClick}
             >
               <div className="flex items-center justify-center w-10 h-10 relative">
                 <AccountIcon className="w-6 h-6" />
@@ -356,20 +395,21 @@ export default function RetailerGlobalNavLoggedIn({
   // Mobile web layout
   if (currentDevice === "Mobile web") {
     return (
-      <header className="relative z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b h-[112px] print:hidden">
+      <header className="relative z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b h-[112px] print:hidden">
         <div className="h-[112px] relative w-full" ref={searchContainerRef}>
           <div className="absolute bg-white h-[112px] left-0 top-0 w-full" />
           <div className="absolute bg-white border border-[#757575] rounded-full flex items-center gap-2 h-10 left-4 right-4 px-4 pr-5 top-14">
             <input
               id="top-search"
-              placeholder="Search products or brands"
-              aria-label="Search products or brands"
+              placeholder="Search or use a phrase"
+              aria-label="Search or use a phrase"
               autoComplete="off"
               data-test-id="searchBarInput"
               className="flex-1 bg-transparent border-0 outline-0 text-[#333333] text-sm placeholder:text-[#757575]"
               value={searchValue}
               onChange={(e) => handleSearchChange(e.target.value)}
               onFocus={handleSearchFocus}
+              onKeyDown={handleSearchKeyDown}
             />
             <div className="flex items-center justify-center">
               <SearchIcon className="w-4 h-4" />
@@ -377,9 +417,10 @@ export default function RetailerGlobalNavLoggedIn({
           </div>
           {showSearchDropdown && isCompassEnabled && (
             <div className="absolute top-[72px] left-4 right-4">
-              <SearchDropdown 
-                searchQuery={searchValue} 
-                onClose={() => setShowSearchDropdown(false)} 
+              <SearchDropdown
+                ref={searchDropdownRef}
+                searchQuery={searchValue}
+                onClose={() => setShowSearchDropdown(false)}
               />
             </div>
           )}
@@ -411,7 +452,11 @@ export default function RetailerGlobalNavLoggedIn({
             <button
               data-test-id="compassButton"
               onClick={togglePanel}
-              className="absolute bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 right-[88px] top-2 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
+              className={`absolute bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 right-[88px] top-2 rounded-[8px] hover:bg-gray-100 transition-all duration-300 ease-in-out ${
+                state.isPanelOpen 
+                  ? 'opacity-0 scale-95 pointer-events-none' 
+                  : 'opacity-100 scale-100 pointer-events-auto'
+              }`}
               aria-label="Compass"
               type="button"
             >
@@ -426,6 +471,7 @@ export default function RetailerGlobalNavLoggedIn({
             style={isCompassEnabled ? { right: '48px' } : { right: '12px' }}
             aria-label="Notifications"
             type="button"
+            onClick={handleNotificationClick}
           >
             <div className="flex items-center justify-center w-10 h-10 relative">
               <NotificationIcon className="w-5 h-5" />
@@ -439,7 +485,7 @@ export default function RetailerGlobalNavLoggedIn({
   // Focused variant - only logo (centered, same position as full variant)
   if (focused) {
     return (
-      <header className="sticky top-0 z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
+      <header className="sticky top-0 z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
         <div className="m-auto w-full lg:px-12 lg:pt-4 flex items-center justify-center px-4 py-4" style={{ maxWidth: "1920px", width: "100%" }}>
           <button
             aria-label="Menu"
@@ -463,7 +509,7 @@ export default function RetailerGlobalNavLoggedIn({
   // Adjusted padding to account for search bar height in standard variant
   if (focused2) {
     return (
-      <header className="sticky top-0 z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
+      <header className="sticky top-0 z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
         <div className="m-auto w-full lg:px-12 flex items-center px-4 pt-5 pb-5 lg:pt-5" style={{ maxWidth: "1920px", width: "100%" }}>
           <button
             aria-label="Menu"
@@ -485,7 +531,7 @@ export default function RetailerGlobalNavLoggedIn({
 
   // Desktop layout
   return (
-    <header className="sticky top-0 z-[301] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
+    <header className="sticky top-0 z-[600] flex w-full flex-col items-stretch bg-white border-[#dfe0e1] border-b print:hidden">
       {/* Top Nav */}
       <div className="m-auto w-full lg:px-12 lg:pt-4 flex items-center justify-center px-4 py-4" style={{ maxWidth: "1920px", width: "100%" }}>
         <button
@@ -537,23 +583,25 @@ export default function RetailerGlobalNavLoggedIn({
               <div className="bg-white border border-[#757575] rounded-full flex items-center h-10 px-4 pr-5">
                 <input
                   id="top-search"
-                  placeholder="Search products or brands"
-                  aria-label="Search products or brands"
+                  placeholder="Search or use a phrase"
+                  aria-label="Search or use a phrase"
                   autoComplete="off"
                   data-test-id="searchBarInput"
                   className="flex-1 bg-transparent border-0 outline-0 text-[#333333] text-sm placeholder:text-[#757575]"
                   value={searchValue}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   onFocus={handleSearchFocus}
+                  onKeyDown={handleSearchKeyDown}
                 />
                 <div className="flex items-center justify-center">
                   <SearchIcon className="w-4 h-4" />
                 </div>
               </div>
               {showSearchDropdown && isCompassEnabled && (
-                <SearchDropdown 
-                  searchQuery={searchValue} 
-                  onClose={() => setShowSearchDropdown(false)} 
+                <SearchDropdown
+                  ref={searchDropdownRef}
+                  searchQuery={searchValue}
+                  onClose={() => setShowSearchDropdown(false)}
                 />
               )}
             </div>
@@ -581,7 +629,13 @@ export default function RetailerGlobalNavLoggedIn({
         )}
         {isCompassEnabled && (
           <>
-            <div>
+            <div
+              className={`transition-all duration-300 ease-in-out ${
+                state.isPanelOpen 
+                  ? 'opacity-0 scale-95 pointer-events-none' 
+                  : 'opacity-100 scale-100 pointer-events-auto'
+              }`}
+            >
               <button
                 data-test-id="compassButton"
                 onClick={togglePanel}
@@ -590,11 +644,13 @@ export default function RetailerGlobalNavLoggedIn({
                 type="button"
               >
                 <div className="flex items-center justify-center w-10 h-10 relative">
-                  <CompassIcon className="w-5 h-5" />
+                  <CompassIcon className="w-[25px] h-[25px]" />
                 </div>
               </button>
             </div>
-            <div className="hidden lg:block" style={{ width: "8px", height: "0px" }} />
+            <div className={`hidden lg:block transition-all duration-300 ease-in-out ${
+              state.isPanelOpen ? 'opacity-0' : 'opacity-100'
+            }`} style={{ width: "8px", height: "0px" }} />
           </>
         )}
         <div>
@@ -603,6 +659,7 @@ export default function RetailerGlobalNavLoggedIn({
             className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
             aria-label="Notifications"
             type="button"
+            onClick={handleNotificationClick}
           >
             <div className="flex items-center justify-center w-10 h-10 relative">
               <NotificationIcon className="w-5 h-5" />
@@ -616,6 +673,7 @@ export default function RetailerGlobalNavLoggedIn({
             data-test-id="accountDropdown"
             className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
             type="button"
+            onClick={handleProfileClick}
           >
             <div className="flex items-center justify-center w-10 h-10 relative">
               <AccountIcon className="w-6 h-6" />
