@@ -1,12 +1,15 @@
 import React from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import RetailerLayout from "../components/RetailerLayout";
 import BrandTile from "../components/shared/BrandTile";
 import { compassProducts } from "../data/compassProducts";
+import { useCompass } from "../contexts/CompassContext";
 
 export default function CategoryPage() {
   const { categoryName } = useParams<{ categoryName: string }>();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { setCurrentProduct } = useCompass();
   const fromCompass = searchParams.get('from') === 'compass';
 
   // Map category names to product categories
@@ -26,6 +29,7 @@ export default function CategoryPage() {
 
   // Mock product data with full details
   const displayProducts = filteredProducts.map(product => ({
+    ...product, // Keep full product object for navigation
     imageUrl: product.imageUrl,
     brandName: product.brandName,
     productName: product.name,
@@ -38,6 +42,13 @@ export default function CategoryPage() {
     topShop: false,
     isFavorited: false,
   }));
+
+  const handleProductClick = (product: typeof filteredProducts[0]) => {
+    // Set product in Compass context for PDP
+    setCurrentProduct(product);
+    // Navigate to PDP
+    navigate('/pdp');
+  };
 
   return (
     <RetailerLayout languageSelector={false} cartCount={13}>
@@ -67,7 +78,7 @@ export default function CategoryPage() {
         <div className="grid grid-cols-6 gap-4 mb-12">
           {displayProducts.map((product, index) => (
             <BrandTile
-              key={index}
+              key={product.id || index}
               imageUrl={product.imageUrl}
               brandName={product.brandName}
               productName={product.productName}
@@ -80,7 +91,7 @@ export default function CategoryPage() {
               topShop={product.topShop}
               onFavorite={() => console.log("Favorited:", product.brandName)}
               isFavorited={product.isFavorited}
-              onClick={() => console.log("Clicked:", product.brandName)}
+              onClick={() => handleProductClick(filteredProducts[index])}
             />
           ))}
         </div>

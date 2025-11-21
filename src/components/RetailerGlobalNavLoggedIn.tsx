@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import SurfacesMenu from "./SurfacesMenu";
 import { useCompass } from "../contexts/CompassContext";
 import SearchDropdown, { SearchDropdownHandle } from "./SearchDropdown";
@@ -188,9 +188,10 @@ export default function RetailerGlobalNavLoggedIn({
   const detectedDevice = useViewport();
   const currentDevice = device || detectedDevice;
   const location = useLocation();
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
-  const { togglePanel, openPanel } = useCompass();
+  const { togglePanel, openPanel, clearMessages, closePanel, state } = useCompass();
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const searchDropdownRef = useRef<SearchDropdownHandle>(null);
 
@@ -199,6 +200,15 @@ export default function RetailerGlobalNavLoggedIn({
     if (isCompassEnabled) {
       openPanel('search', 'New York City hotel room gifts for guests');
     }
+  };
+
+  // Reset prototype to beginning when clicking person icon
+  const handleProfileClick = () => {
+    // Clear all Compass state
+    clearMessages();
+    closePanel();
+    // Navigate back to home page
+    navigate('/template');
   };
 
   // Only enable Compass on /template route (Compass prototype)
@@ -300,7 +310,11 @@ export default function RetailerGlobalNavLoggedIn({
               <button
                 data-test-id="compassButton"
                 onClick={togglePanel}
-                className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
+                className={`bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-all duration-300 ease-in-out ${
+                  state.isPanelOpen 
+                    ? 'opacity-0 scale-95 pointer-events-none' 
+                    : 'opacity-100 scale-100 pointer-events-auto'
+                }`}
                 aria-label="Compass"
                 type="button"
               >
@@ -411,7 +425,11 @@ export default function RetailerGlobalNavLoggedIn({
             <button
               data-test-id="compassButton"
               onClick={togglePanel}
-              className="absolute bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 right-[88px] top-2 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
+              className={`absolute bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 right-[88px] top-2 rounded-[8px] hover:bg-gray-100 transition-all duration-300 ease-in-out ${
+                state.isPanelOpen 
+                  ? 'opacity-0 scale-95 pointer-events-none' 
+                  : 'opacity-100 scale-100 pointer-events-auto'
+              }`}
               aria-label="Compass"
               type="button"
             >
@@ -563,7 +581,13 @@ export default function RetailerGlobalNavLoggedIn({
         )}
         {isCompassEnabled && (
           <>
-            <div>
+            <div
+              className={`transition-all duration-300 ease-in-out ${
+                state.isPanelOpen 
+                  ? 'opacity-0 scale-95 pointer-events-none' 
+                  : 'opacity-100 scale-100 pointer-events-auto'
+              }`}
+            >
               <button
                 data-test-id="compassButton"
                 onClick={togglePanel}
@@ -576,7 +600,9 @@ export default function RetailerGlobalNavLoggedIn({
                 </div>
               </button>
             </div>
-            <div className="hidden lg:block" style={{ width: "8px", height: "0px" }} />
+            <div className={`hidden lg:block transition-all duration-300 ease-in-out ${
+              state.isPanelOpen ? 'opacity-0' : 'opacity-100'
+            }`} style={{ width: "8px", height: "0px" }} />
           </>
         )}
         <div>
@@ -599,6 +625,7 @@ export default function RetailerGlobalNavLoggedIn({
             data-test-id="accountDropdown"
             className="bg-transparent border-0 p-0 cursor-pointer flex items-center justify-center w-10 h-10 rounded-[8px] hover:bg-gray-100 transition-colors duration-500 ease-in-out"
             type="button"
+            onClick={handleProfileClick}
           >
             <div className="flex items-center justify-center w-10 h-10 relative">
               <AccountIcon className="w-6 h-6" />

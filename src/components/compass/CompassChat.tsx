@@ -125,9 +125,93 @@ export default function CompassChat() {
     return `The ${product.name} from ${product.brandName} is a ${product.tags.includes('premium') ? 'premium' : 'quality'} product${product.tags.includes('nyc-local') ? ' sourced from local NYC suppliers' : ''}. ${product.description} It's priced at $${product.price.toFixed(2)} and has a ${product.rating ? `${product.rating}-star` : 'great'} rating. Is there anything specific you'd like to know about ingredients, shipping, or availability?`;
   };
 
+  // Helper function to find paired/complementary products
+  const findPairedProducts = (product: CompassProduct): CompassProduct[] => {
+    const pairedProducts: CompassProduct[] = [];
+    
+    // Find products from same brand (excluding current product)
+    const sameBrandProducts = compassProducts.filter(
+      p => p.brandName === product.brandName && p.id !== product.id
+    );
+    pairedProducts.push(...sameBrandProducts.slice(0, 2));
+    
+    // Find complementary category products
+    let complementaryCategory: string | null = null;
+    if (product.category === 'snack') {
+      complementaryCategory = 'beverage';
+    } else if (product.category === 'beverage') {
+      complementaryCategory = 'snack';
+    } else if (product.category === 'soap') {
+      complementaryCategory = 'accessory';
+    } else if (product.category === 'accessory') {
+      complementaryCategory = 'soap';
+    }
+    
+    if (complementaryCategory) {
+      const complementaryProducts = compassProducts.filter(
+        p => p.category === complementaryCategory && p.id !== product.id
+      );
+      // Prefer products with similar tags
+      const similarTagProducts = complementaryProducts.filter(p => 
+        p.tags.some(tag => product.tags.includes(tag))
+      );
+      pairedProducts.push(...similarTagProducts.slice(0, 2));
+      
+      // Fill remaining slots with any complementary products
+      if (pairedProducts.length < 4) {
+        const remaining = complementaryProducts.filter(
+          p => !pairedProducts.some(pp => pp.id === p.id)
+        );
+        pairedProducts.push(...remaining.slice(0, 4 - pairedProducts.length));
+      }
+    }
+    
+    // Ensure we have at least some products, fill with any premium products if needed
+    if (pairedProducts.length < 4) {
+      const premiumProducts = compassProducts.filter(
+        p => p.id !== product.id && 
+        p.tags.includes('premium') && 
+        !pairedProducts.some(pp => pp.id === p.id)
+      );
+      pairedProducts.push(...premiumProducts.slice(0, 4 - pairedProducts.length));
+    }
+    
+    return pairedProducts.slice(0, 6); // Return up to 6 paired products
+  };
+
   const handleAssistantResponse = (userInput: string) => {
     // Check if user is asking about a specific product (context is set)
     if (state.currentProduct) {
+      const lowerInput = userInput.toLowerCase();
+      
+      // Check if asking about paired/complementary products
+      const isPairingRequest = 
+        lowerInput.includes('pair') || 
+        lowerInput.includes('go with') || 
+        lowerInput.includes('complement') || 
+        lowerInput.includes('work together') ||
+        lowerInput.includes('other products') ||
+        lowerInput.includes('show me other') ||
+        lowerInput.includes('what else');
+      
+      if (isPairingRequest) {
+        // Find paired products
+        const pairedProducts = findPairedProducts(state.currentProduct);
+        
+        // Add message with paired products
+        addMessage({
+          role: 'assistant',
+          content: `Here are some products that pair well with ${state.currentProduct.name}:`,
+          productsByCategory: [
+            {
+              category: 'Paired Products',
+              products: pairedProducts,
+            },
+          ],
+        });
+        return;
+      }
+      
       // Generate contextual response based on question type
       const response = generateProductResponse(state.currentProduct, userInput);
       addMessage({

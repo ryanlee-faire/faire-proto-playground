@@ -16,16 +16,12 @@ function CategoryScrollRow({
   categoryGroup,
   idx,
   onProductSelect,
-  handleAddToCart,
   selectedProductIds,
-  isProductInCart,
 }: {
   categoryGroup: { category: string; products: CompassProduct[] };
   idx: number;
   onProductSelect?: (productId: string) => void;
-  handleAddToCart: (product: CompassProduct) => void;
   selectedProductIds: string[];
-  isProductInCart: (productId: string) => boolean;
 }) {
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -56,7 +52,7 @@ function CategoryScrollRow({
 
   return (
     <div
-      className="animate-fadeInUp relative"
+      className={`animate-fadeInUp relative pb-4 ${idx > 0 ? 'pt-4 border-t border-[#dfe0e1]' : ''}`}
       style={{
         animationDelay: `${idx * 400}ms`,
         opacity: 0,
@@ -124,9 +120,7 @@ function CategoryScrollRow({
               <CompassProductCard
                 product={product}
                 onSelect={(p) => onProductSelect?.(p.id)}
-                onAddToCart={handleAddToCart}
                 isSelected={selectedProductIds.includes(product.id)}
-                isInCart={isProductInCart(product.id)}
               />
             </div>
           ))}
@@ -147,17 +141,8 @@ export default function CompassMessage({
   onChipClick,
   selectedProductIds = [],
 }: CompassMessageProps) {
-  const { addToCart, state } = useCompass();
   const isUser = message.role === 'user';
   const isAssistant = message.role === 'assistant';
-
-  const handleAddToCart = (product: CompassProduct) => {
-    addToCart(product, 1);
-  };
-
-  const isProductInCart = (productId: string) => {
-    return state.cartItems.some(item => item.product.id === productId);
-  };
 
   if (isUser) {
     return (
@@ -291,8 +276,8 @@ export default function CompassMessage({
 
         {/* Product grid by category (if present) */}
         {message.productsByCategory && message.productsByCategory.length > 0 && (
-          <div className="mt-4 space-y-4" style={{ width: '100%' }}>
-            {message.productsByCategory.map((categoryGroup, idx) => <CategoryScrollRow key={`cat-${categoryGroup.category}-${idx}`} categoryGroup={categoryGroup} idx={idx} onProductSelect={onProductSelect} handleAddToCart={handleAddToCart} selectedProductIds={selectedProductIds} isProductInCart={isProductInCart} />)}
+          <div className="mt-4" style={{ width: '100%' }}>
+            {message.productsByCategory.map((categoryGroup, idx) => <CategoryScrollRow key={`cat-${categoryGroup.category}-${idx}`} categoryGroup={categoryGroup} idx={idx} onProductSelect={onProductSelect} selectedProductIds={selectedProductIds} />)}
           </div>
         )}
 
@@ -304,9 +289,7 @@ export default function CompassMessage({
                 key={product.id}
                 product={product}
                 onSelect={(p) => onProductSelect?.(p.id)}
-                onAddToCart={handleAddToCart}
                 isSelected={selectedProductIds.includes(product.id)}
-                isInCart={isProductInCart(product.id)}
               />
             ))}
           </div>

@@ -5,25 +5,16 @@ import { CompassProduct, useCompass } from '../../contexts/CompassContext';
 interface CompassProductCardProps {
   product: CompassProduct;
   onSelect?: (product: CompassProduct) => void;
-  onAddToCart?: (product: CompassProduct) => void;
   isSelected?: boolean;
-  isInCart?: boolean;
 }
 
 export default function CompassProductCard({
   product,
   onSelect,
-  onAddToCart,
   isSelected = false,
-  isInCart = false,
 }: CompassProductCardProps) {
   const navigate = useNavigate();
   const { setCurrentProduct } = useCompass();
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card click
-    onAddToCart?.(product);
-  };
 
   // Star icon component
   const StarIcon = () => (
@@ -56,7 +47,7 @@ export default function CompassProductCard({
     >
       {/* Image Container (slightly wider aspect ratio for space efficiency) */}
       <div
-        className="relative w-full overflow-hidden"
+        className="relative w-full overflow-hidden border border-transparent hover:border-[#dfe0e1] transition-colors"
         style={{ aspectRatio: "4 / 3", borderRadius: "4px" }}
       >
         {/* Background Image */}
@@ -74,22 +65,6 @@ export default function CompassProductCard({
           }}
         />
 
-        {/* Add to Cart Button - bottom left, shows on hover */}
-        <button
-          onClick={handleAddToCart}
-          className="absolute bottom-2 left-2 z-10 bg-white text-[#333333] rounded-full p-1.5 shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-[#333333] hover:text-white"
-          aria-label={isInCart ? "In cart" : "Add to cart"}
-        >
-          {isInCart ? (
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-              <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          ) : (
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          )}
-        </button>
       </div>
 
       {/* Product Info - more compact than BrandTile */}
@@ -106,13 +81,6 @@ export default function CompassProductCard({
               <span>{product.rating}</span>
             </div>
           )}
-        </div>
-        
-        {/* Category tag */}
-        <div className="mt-1">
-          <span className="text-[10px] bg-[#f5f5f5] text-[#757575] px-2 py-0.5 rounded-full">
-            {product.category}
-          </span>
         </div>
       </div>
     </div>
