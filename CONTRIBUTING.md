@@ -19,21 +19,20 @@ The Design Prototype Playground (DPP) is a lightweight prototyping environment w
 
 ### Step-by-Step Guide
 
-#### 1. Create Your Branch
+#### 1. Start a New Agent
 
-```bash
-# Option A: Branch from main (if index redesign is merged)
-git checkout main
-git pull
-git checkout -b your-feature-name
-
-# Option B: Branch from index-page-redesign (if you want the new gallery)
-git checkout index-page-redesign
-git pull
-git checkout -b your-feature-name
+Open a new Cursor chat (Cmd+L) and say:
+```
+I want to build a new prototype.
 ```
 
-#### 2. Create the Prototype Page
+The agent will:
+- Ask if it's a new or existing feature
+- Create a branch for you (if new)
+- Ask for your PRD/Notion link
+- Guide you through the process
+
+#### 2. Create the Prototype Page (Agent Does This)
 
 **File location:** `src/pages/[YourFeature]Page.tsx`
 
@@ -222,31 +221,39 @@ Production mirrors you can use as starting points. These reflect what currently 
 
 A new agent should:
 
-1. **Ask for context:**
-   - "Do you have a PRD or Notion doc?"
-   - "What surface area is this for?"
-   - "What are the key flows to demonstrate?"
+1. **Ask if new or existing:**
+   - "Are you starting a new feature or continuing existing work?"
 
-2. **Read existing examples** relevant to the surface area
+2. **For NEW features:**
+   - Ask for feature name (for branch naming)
+   - Create branch automatically
+   - Ask for PRD/Notion doc
+   - Ask for surface area (Brand/Retailer)
+   - Ask about key flows to demonstrate
 
-3. **Propose a simple starting point** before building everything
+3. **For EXISTING features:**
+   - Ask which prototype they're working on
+   - Continue on current branch
 
-4. **Build iteratively** - Get one screen working, then add more
-
-5. **Keep user in the loop** - Show progress, ask for feedback
+4. **Then:** Read examples, build iteratively, keep user in the loop
 
 ### Good First Message to Agent
 
+**Super simple version:**
 ```
-I want to build a new prototype for [Feature Name]. 
-
-Surface: [Brand/Retailer]
-PRD: [Notion link if available]
-
-Core idea: [Brief explanation of what you're prototyping]
-
-Can you help me set this up?
+I want to build a new prototype.
 ```
+
+The agent will ask you the right questions!
+
+**Or with more context:**
+```
+I want to build a new prototype for Reactive Brand Onboarding.
+
+PRD: [paste Notion link]
+```
+
+The agent will handle branching and setup automatically.
 
 ## Troubleshooting
 

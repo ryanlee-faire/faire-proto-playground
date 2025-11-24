@@ -148,12 +148,25 @@ The DPP uses URL-based navigation:
 
 ## When User Says "I want to build a new prototype"
 
-1. **Acknowledge** you understand this is for the DPP
-2. **Ask for PRD/Notion context** - "Do you have a PRD or design doc?"
-3. **Ask for specifics** - surface area, key flows, interactions
-4. **Read existing examples** - Learn from similar prototypes
-5. **Build iteratively** - Start simple, add complexity
-6. **Keep it isolated** - Don't touch other prototypes
+1. **Ask: New feature or existing feature?**
+   - "Are you starting a new feature or continuing work on an existing prototype?"
+   
+2. **If NEW feature:**
+   - Ask: "What's the feature name?" (for branch name)
+   - Ask: "Do you have a PRD or Notion doc?"
+   - Ask: "Is this for Brand or Retailer surface?"
+   - **Create branch automatically:** `git checkout -b [feature-name]` (from current branch)
+   - Proceed to build the prototype
+
+3. **If EXISTING feature:**
+   - Ask: "Which prototype are you working on?"
+   - Continue working on current branch
+   - Make updates to existing files
+
+4. **Then for all prototypes:**
+   - Read existing examples for patterns
+   - Build iteratively - start simple, add complexity
+   - Keep it isolated - don't touch other prototypes
 
 ## Quick Reference
 
