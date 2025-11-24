@@ -69,13 +69,16 @@ function AppContent() {
       <div
         className="compass-content-wrapper"
         style={{
-          marginRight: shouldApplyMargin ? '480px' : '0',
+          marginRight: shouldApplyMargin ? '385px' : '0',
           transition: 'margin-right 350ms cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
         <Routes>
         <Route path="/login/callback" element={<LoginCallback />} />
         <Route path="/" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
+        <Route path="/experimental" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
+        <Route path="/templates" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
+        <Route path="/components" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
         <Route path="/template" element={<RouteWrapper><TemplatePage /></RouteWrapper>} />
         <Route path="/category/:categoryName" element={<RouteWrapper><CategoryPage /></RouteWrapper>} />
         <Route path="/new-page" element={<RouteWrapper><NewPage /></RouteWrapper>} />
