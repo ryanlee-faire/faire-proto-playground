@@ -4,6 +4,7 @@ import { TaskCard, TaskStatus } from "../../components/faire/ReactiveOnboarding/
 import { TermsModal } from "../../components/faire/ReactiveOnboarding/TermsModal";
 import { COIUploadModal } from "../../components/faire/ReactiveOnboarding/COIUploadModal";
 import { ConfirmationModal } from "../../components/faire/ReactiveOnboarding/ConfirmationModal";
+import { VariantSwitcher } from "../../components/VariantSwitcher";
 
 export default function ReactiveBrandOnboardingPage() {
   useEffect(() => {
@@ -20,6 +21,9 @@ export default function ReactiveBrandOnboardingPage() {
   // Task completion states
   const [termsStatus, setTermsStatus] = useState<TaskStatus>('not-started');
   const [coiStatus, setCoiStatus] = useState<TaskStatus>('not-started');
+
+  // Variant switcher state (for showcasing design options)
+  const [variant, setVariant] = useState(1);
 
   const handleTermsAccept = () => {
     setTermsStatus('complete');
@@ -429,17 +433,26 @@ export default function ReactiveBrandOnboardingPage() {
         isOpen={termsModalOpen}
         onClose={() => setTermsModalOpen(false)}
         onAccept={handleTermsAccept}
+        variant={variant as 1 | 2 | 3}
       />
       <COIUploadModal
         isOpen={coiModalOpen}
         onClose={() => setCoiModalOpen(false)}
         onUpload={handleCOIUpload}
+        variant={variant as 1 | 2 | 3}
       />
       <ConfirmationModal
         isOpen={confirmationModalOpen}
         onClose={handleConfirmationClose}
         fileName={uploadedFileName}
         type={confirmationType}
+      />
+
+      {/* Variant Switcher - for showcasing different design options */}
+      <VariantSwitcher
+        variantCount={3}
+        activeVariant={variant}
+        onVariantChange={setVariant}
       />
     </div>
   );
