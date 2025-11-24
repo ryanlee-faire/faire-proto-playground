@@ -17,6 +17,7 @@ import CompassFullSurfacePage from "./pages/CompassFullSurfacePage";
 import SearchResultsPage from "./pages/SearchResultsPage";
 import ProductsPage from "./pages/faire/ProductsPage";
 import BulkEditorPage from "./pages/faire/BulkEditorPage";
+import ReactiveBrandOnboardingPage from "./pages/faire/ReactiveBrandOnboardingPage";
 import GridOverlay from "./components/GridOverlay";
 import SurfacesMenuOverlay from "./components/SurfacesMenuOverlay";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -106,6 +107,7 @@ function AppContent() {
         {/* Faire Product Management Routes */}
         <Route path="/faire/products" element={<RouteWrapper><ProductsPage /></RouteWrapper>} />
         <Route path="/faire/bulk-editor" element={<RouteWrapper><BulkEditorPage /></RouteWrapper>} />
+        <Route path="/faire/reactive-onboarding" element={<RouteWrapper><ReactiveBrandOnboardingPage /></RouteWrapper>} />
         </Routes>
       </div>
     </div>
