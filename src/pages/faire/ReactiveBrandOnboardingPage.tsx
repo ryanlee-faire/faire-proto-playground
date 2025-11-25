@@ -5,6 +5,7 @@ import { TermsModal } from "../../components/faire/ReactiveOnboarding/TermsModal
 import { COIUploadModal } from "../../components/faire/ReactiveOnboarding/COIUploadModal";
 import { ConfirmationModal } from "../../components/faire/ReactiveOnboarding/ConfirmationModal";
 import { LearnMoreModal } from "../../components/faire/ReactiveOnboarding/LearnMoreModal";
+import { MultiStepOnboardingModal } from "../../components/faire/ReactiveOnboarding/MultiStepOnboardingModal";
 import { VariantSwitcher } from "../../components/VariantSwitcher";
 
 export default function ReactiveBrandOnboardingPage() {
@@ -17,6 +18,7 @@ export default function ReactiveBrandOnboardingPage() {
   const [coiModalOpen, setCoiModalOpen] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [learnMoreModalOpen, setLearnMoreModalOpen] = useState(false);
+  const [multiStepModalOpen, setMultiStepModalOpen] = useState(false);
   const [confirmationType, setConfirmationType] = useState<'coi-upload' | 'coi-confirmation'>('coi-upload');
   const [uploadedFileName, setUploadedFileName] = useState('');
 
@@ -49,6 +51,12 @@ export default function ReactiveBrandOnboardingPage() {
       setCoiStatus('pending-review');
       setConfirmationModalOpen(false);
     }
+  };
+
+  const handleMultiStepComplete = () => {
+    setTermsStatus('complete');
+    setCoiStatus('pending-review');
+    setMultiStepModalOpen(false);
   };
 
   const allTasksComplete = termsStatus === 'complete' && (coiStatus === 'complete' || coiStatus === 'pending-review');
@@ -114,83 +122,208 @@ export default function ReactiveBrandOnboardingPage() {
                     Join Faire+ to accept the order
                   </h2>
                   
-                  <div className="text-sm text-[#333333] leading-[20px] tracking-[0.15px]">
-                    <p className="mb-4">
-                      Congratulations, you have received an order from a large retailer. To accept this order, you will need to join Faire+, our program required for selling to these unique retailers. Keep in mind, no changes to your commission or fees.
-                    </p>
-                    
-                    <p className="mb-4 font-normal">
-                      Complete these steps:
-                    </p>
-                    
-                    <div className="space-y-2 mb-4">
-                      <p className="flex items-center gap-3">
-                        <span className="inline-flex items-center gap-1.5">
-                          1.{' '}
-                          <button 
-                            onClick={() => setTermsModalOpen(true)}
-                            className="underline decoration-[#333333] hover:text-[var(--color-text-subdued)]"
-                          >
-                            Sign the Faire+ agreement
-                          </button>
-                          <span className="relative group">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                              <circle cx="8" cy="8" r="7" stroke="#999999" strokeWidth="1.5" />
-                              <text x="8" y="12" textAnchor="middle" fontSize="10" fontWeight="500" fill="#999999">i</text>
-                            </svg>
-                            <span className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-4 py-3 bg-[#333333] text-white text-sm leading-snug rounded-lg w-[320px] text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                              A standard vendor agreement required by enterprise retailers. No cost to sign—just a one-time acknowledgment.
-                              <span className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-t-transparent border-b-transparent border-r-[#333333]"></span>
-                            </span>
-                          </span>
-                        </span>
-                        {termsStatus === 'complete' && (
-                          <span className="inline-flex items-center gap-1.5 border border-[#E5E7EB] bg-transparent text-[#333333] text-sm px-3 py-1 rounded-lg">
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M2 6l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                            Complete
-                          </span>
-                        )}
+                  {variant === 8 ? (
+                    /* Variant 8: Prominent steps with buttons below */
+                    <div className="text-sm text-[#333333] leading-[20px] tracking-[0.15px]">
+                      <p className="mb-4">
+                        Congratulations, you have received an order from a large retailer. To accept this order, you will need to join Faire+, our program required for selling to these unique retailers. Keep in mind, no changes to your commission or fees.
                       </p>
-                      <p className="flex items-center gap-3">
-                        <span className="inline-flex items-center gap-1.5">
-                          2.{' '}
-                          <button 
-                            onClick={() => setCoiModalOpen(true)}
-                            className="underline decoration-[#333333] hover:text-[var(--color-text-subdued)]"
-                          >
-                            Upload a Certificate of Insurance
-                          </button>
-                          <span className="relative group">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                              <circle cx="8" cy="8" r="7" stroke="#999999" strokeWidth="1.5" />
-                              <text x="8" y="12" textAnchor="middle" fontSize="10" fontWeight="500" fill="#999999">i</text>
-                            </svg>
-                            <span className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-4 py-3 bg-[#333333] text-white text-sm leading-snug rounded-lg w-[320px] text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                              Proof of $2M liability insurance with Faire listed as additional insured. Your insurance provider can issue this document.
-                              <span className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-t-transparent border-b-transparent border-r-[#333333]"></span>
-                            </span>
+                      
+                      <button 
+                        onClick={() => setLearnMoreModalOpen(true)}
+                        className="mb-6 px-4 py-2 rounded-lg border border-[#333333] text-sm font-medium text-[#333333] hover:bg-[#f5f5f5] transition-colors"
+                      >
+                        Learn more
+                      </button>
+                      
+                      {/* Steps - clean list style with buttons below */}
+                      <div className="space-y-5">
+                        {/* Divider */}
+                        <div className="border-t border-[#e5e5e5]" />
+
+                        <p className="text-sm text-[#333333]">Complete these steps:</p>
+
+                        {/* Step 1: Sign Agreement */}
+                        <div className="flex items-start gap-3">
+                          <span className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium flex-shrink-0 ${termsStatus === 'complete' ? 'bg-[#2D5F5D] text-white' : 'bg-[#333333] text-white'}`}>
+                            {termsStatus === 'complete' ? (
+                              <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2">
+                                <path d="M2 6l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            ) : '1'}
                           </span>
-                        </span>
-                        {(coiStatus === 'complete' || coiStatus === 'pending-review') && (
-                          <span className="inline-flex items-center gap-1.5 border border-[#E5E7EB] bg-transparent text-[#333333] text-sm px-3 py-1 rounded-lg">
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M2 6l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                            Complete
+                          <div className="flex-1 pt-0.5">
+                            <h3 className="font-medium text-[#333333] mb-1">Sign the Faire+ Agreement</h3>
+                            <p className="text-[#666666] text-sm mb-3">
+                              Accept the terms required by our large retailers. This acknowledges you are prepared to meet the operational standards expected by enterprise buyers.
+                            </p>
+                            {termsStatus === 'complete' ? (
+                              <span className="inline-flex items-center gap-1.5 text-[#2D5F5D] text-sm font-medium">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                  <path d="M5 8l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                                Complete
+                              </span>
+                            ) : (
+                              <button 
+                                onClick={() => setTermsModalOpen(true)}
+                                className="text-sm text-[#333333] underline decoration-[#333333] hover:text-[#666666]"
+                              >
+                                Sign Now
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Step 2: Upload COI */}
+                        <div className="flex items-start gap-3">
+                          <span className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium flex-shrink-0 ${coiStatus === 'complete' || coiStatus === 'pending-review' ? 'bg-[#2D5F5D] text-white' : 'bg-[#333333] text-white'}`}>
+                            {coiStatus === 'complete' || coiStatus === 'pending-review' ? (
+                              <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2">
+                                <path d="M2 6l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            ) : '2'}
                           </span>
-                        )}
-                      </p>
+                          <div className="flex-1 pt-0.5">
+                            <h3 className="font-medium text-[#333333] mb-1">Upload Certificate of Insurance</h3>
+                            <p className="text-[#666666] text-sm mb-3">
+                              Provide proof of $2M liability coverage with Faire listed as additional insured. This ensures you can fulfill large orders and removes liability concerns.
+                            </p>
+                            {coiStatus === 'complete' ? (
+                              <span className="inline-flex items-center gap-1.5 text-[#2D5F5D] text-sm font-medium">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                  <path d="M5 8l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                                Complete
+                              </span>
+                            ) : coiStatus === 'pending-review' ? (
+                              <span className="inline-flex items-center gap-1.5 text-[#B45309] text-sm font-medium">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                  <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5"/>
+                                  <path d="M8 5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                                  <circle cx="8" cy="11" r="0.75" fill="currentColor"/>
+                                </svg>
+                                Pending Review
+                              </span>
+                            ) : (
+                              <button 
+                                onClick={() => setCoiModalOpen(true)}
+                                className="text-sm text-[#333333] underline decoration-[#333333] hover:text-[#666666]"
+                              >
+                                Upload COI
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    
-                    <button 
-                      onClick={variant === 6 ? () => setLearnMoreModalOpen(true) : undefined}
-                      className="mt-2 px-4 py-2 rounded-lg border border-[#333333] text-sm font-medium text-[#333333] hover:bg-[#f5f5f5] transition-colors"
-                    >
-                      Learn more
-                    </button>
-                  </div>
+                  ) : variant === 7 ? (
+                    /* Variant 7: Simplified banner with single CTA */
+                    <div className="text-sm text-[#333333] leading-[20px] tracking-[0.15px]">
+                      <p className="mb-4">
+                        Congratulations, you have received an order from a large retailer. To accept this order, you will need to join Faire+, our program required for selling to these unique retailers.
+                      </p>
+                      <p className="mb-6">
+                        Keep in mind, no changes to your commission or fees.
+                      </p>
+                      
+                      {allTasksComplete ? (
+                        <div className="flex items-center gap-2 text-[#2D5F5D]">
+                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5"/>
+                            <path d="M6 10l3 3 5-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          <span className="font-medium">Faire+ enrollment complete</span>
+                        </div>
+                      ) : (
+                        <button 
+                          onClick={() => setMultiStepModalOpen(true)}
+                          className="px-6 py-3 rounded-lg bg-[#333333] text-sm font-medium text-white hover:bg-[#444444] transition-colors"
+                        >
+                          Join Faire+
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    /* Variants 1-6: Original checklist banner */
+                    <div className="text-sm text-[#333333] leading-[20px] tracking-[0.15px]">
+                      <p className="mb-4">
+                        Congratulations, you have received an order from a large retailer. To accept this order, you will need to join Faire+, our program required for selling to these unique retailers. Keep in mind, no changes to your commission or fees.
+                      </p>
+                      
+                      <p className="mb-4 font-normal">
+                        Complete these steps:
+                      </p>
+                      
+                      <div className="space-y-2 mb-4">
+                        <p className="flex items-center gap-3">
+                          <span className="inline-flex items-center gap-1.5">
+                            1.{' '}
+                            <button 
+                              onClick={() => setTermsModalOpen(true)}
+                              className="underline decoration-[#333333] hover:text-[var(--color-text-subdued)]"
+                            >
+                              Sign the Faire+ agreement
+                            </button>
+                            <span className="relative group">
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <circle cx="8" cy="8" r="7" stroke="#999999" strokeWidth="1.5" />
+                                <text x="8" y="12" textAnchor="middle" fontSize="10" fontWeight="500" fill="#999999">i</text>
+                              </svg>
+                              <span className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-4 py-3 bg-[#333333] text-white text-sm leading-snug rounded-lg w-[320px] text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                                A standard vendor agreement required by enterprise retailers. No cost to sign—just a one-time acknowledgment.
+                                <span className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-t-transparent border-b-transparent border-r-[#333333]"></span>
+                              </span>
+                            </span>
+                          </span>
+                          {termsStatus === 'complete' && (
+                            <span className="inline-flex items-center gap-1.5 border border-[#E5E7EB] bg-transparent text-[#333333] text-sm px-3 py-1 rounded-lg">
+                              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M2 6l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Complete
+                            </span>
+                          )}
+                        </p>
+                        <p className="flex items-center gap-3">
+                          <span className="inline-flex items-center gap-1.5">
+                            2.{' '}
+                            <button 
+                              onClick={() => setCoiModalOpen(true)}
+                              className="underline decoration-[#333333] hover:text-[var(--color-text-subdued)]"
+                            >
+                              Upload a Certificate of Insurance
+                            </button>
+                            <span className="relative group">
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <circle cx="8" cy="8" r="7" stroke="#999999" strokeWidth="1.5" />
+                                <text x="8" y="12" textAnchor="middle" fontSize="10" fontWeight="500" fill="#999999">i</text>
+                              </svg>
+                              <span className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-4 py-3 bg-[#333333] text-white text-sm leading-snug rounded-lg w-[320px] text-left opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                                Proof of $2M liability insurance with Faire listed as additional insured. Your insurance provider can issue this document.
+                                <span className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-b-[6px] border-r-[6px] border-t-transparent border-b-transparent border-r-[#333333]"></span>
+                              </span>
+                            </span>
+                          </span>
+                          {(coiStatus === 'complete' || coiStatus === 'pending-review') && (
+                            <span className="inline-flex items-center gap-1.5 border border-[#E5E7EB] bg-transparent text-[#333333] text-sm px-3 py-1 rounded-lg">
+                              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M2 6l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Complete
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                      
+                      <button 
+                        onClick={variant === 6 ? () => setLearnMoreModalOpen(true) : undefined}
+                        className="mt-2 px-4 py-2 rounded-lg border border-[#333333] text-sm font-medium text-[#333333] hover:bg-[#f5f5f5] transition-colors"
+                      >
+                        Learn more
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -480,10 +613,15 @@ export default function ReactiveBrandOnboardingPage() {
         isOpen={learnMoreModalOpen}
         onClose={() => setLearnMoreModalOpen(false)}
       />
+      <MultiStepOnboardingModal
+        isOpen={multiStepModalOpen}
+        onClose={() => setMultiStepModalOpen(false)}
+        onComplete={handleMultiStepComplete}
+      />
 
       {/* Variant Switcher - for showcasing different design options */}
       <VariantSwitcher
-        variantCount={6}
+        variantCount={8}
         activeVariant={variant}
         onVariantChange={setVariant}
       />
