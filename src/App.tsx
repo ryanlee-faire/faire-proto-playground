@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Security } from "@okta/okta-react";
 import IndexPage from "./pages/IndexPage";
+import HowToPage from "./pages/HowToPage";
 import TemplatePage from "./pages/TemplatePage";
 import CategoryPage from "./pages/CategoryPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
@@ -99,6 +100,7 @@ function AppContent() {
         <Routes>
         <Route path="/login/callback" element={<LoginCallback />} />
         <Route path="/" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
+        <Route path="/how-to" element={<RouteWrapper><HowToPage /></RouteWrapper>} />
         <Route path="/experimental" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
         <Route path="/templates" element={<RouteWrapper><IndexPage /></RouteWrapper>} />
         <Route path="/components" element={<RouteWrapper><IndexPage /></RouteWrapper>} />

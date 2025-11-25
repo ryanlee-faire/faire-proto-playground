@@ -301,14 +301,22 @@ export default function IndexPage() {
             This playground is a space for designers and collaborators to rapidly prototype using similar-ish looking UI. It's not connected to production data or live experiments, it's a standalone environment for exploration and validation.
           </p>
           
-          <a 
-            href="https://www.notion.so/faire/Design-Prototyping-Playground-Leveraging-Slate-Community-Components-AI-Tooling-2a72efb5c25a80ad93fbd33a5f82ff82?source=copy_link"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block bg-[#333333] text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#000000] transition-colors"
-          >
-            Learn more
-          </a>
+          <div className="flex gap-3">
+            <Link
+              to="/how-to"
+              className="inline-block bg-[#333333] text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#000000] transition-colors"
+            >
+              How to Get Started
+            </Link>
+            <a 
+              href="https://www.notion.so/faire/Design-Prototyping-Playground-Leveraging-Slate-Community-Components-AI-Tooling-2a72efb5c25a80ad93fbd33a5f82ff82?source=copy_link"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block border border-[#333333] text-[#333333] px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#333333] hover:text-white transition-colors"
+            >
+              Learn more
+            </a>
+          </div>
           
           <div className="border-t border-[#dfe0e1] my-6"></div>
           
