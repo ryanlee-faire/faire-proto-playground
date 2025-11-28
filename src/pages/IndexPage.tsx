@@ -241,9 +241,9 @@ export default function IndexPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5]">
-      {/* Header - Sticky with tabs in top-right */}
-      <header className="sticky top-0 bg-[#f5f5f5] z-50" style={{ borderBottom: '1px solid #dfe0e1' }}>
+    <div className={`bg-[#f5f5f5] ${isDefault ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
+      {/* Header - Fixed with tabs in top-right */}
+      <header className={`${isDefault ? 'fixed' : 'sticky'} top-0 left-0 right-0 bg-[#f5f5f5] z-50`} style={{ borderBottom: '1px solid #dfe0e1' }}>
         <div className="mx-auto px-12" style={{ maxWidth: "1440px", height: '64px' }}>
           <div className="flex items-center justify-between h-full">
             {/* Left: Faire logo */}
@@ -265,15 +265,18 @@ export default function IndexPage() {
         </div>
       </header>
 
-      {/* Hero Section - Only on default page */}
+      {/* Hero Section with Card Anchored to Bottom - Only on default page */}
       {isDefault && (
-        <div className="relative py-32">
-          {/* Centered Hero Text */}
-          <div className="flex flex-col items-center justify-center px-12">
+        <div className="h-full flex flex-col">
+          {/* Spacer for fixed header */}
+          <div style={{ height: '64px', flexShrink: 0 }}></div>
+          
+          {/* Centered Hero Text - takes remaining space */}
+          <div className="flex-1 flex flex-col items-center justify-center px-12">
             <h1 className="text-6xl md:text-7xl text-[#333333] text-center mb-8 leading-tight" style={{ fontFamily: 'Nantes, serif', maxWidth: '999px' }}>
-              A playground for rapid exploration and ideation
+              A playground for rapid exploration and ideation*
             </h1>
-            <p className="text-sm text-[#757575] text-center tracking-wide">
+            <p className="text-sm text-[#757575] text-center tracking-wide mb-8">
               Faire Design Prototype Playground · <a 
                 href="https://github.com/ryanlee-faire/faire-proto-playground" 
                 target="_blank" 
@@ -283,73 +286,69 @@ export default function IndexPage() {
                 Last updated {lastUpdated}
               </a>
             </p>
-          </div>
-        </div>
-      )}
-
-      {/* What is this card - only on default landing page */}
-      {isDefault && (
-        <div className="relative px-12 py-32">
-        <div 
-          className="mx-auto bg-white rounded-3xl shadow-sm hover:shadow-xl transition-shadow duration-300 p-8"
-          style={{ maxWidth: '800px' }}
-        >
-          <h2 className="text-2xl font-semibold text-[#333333] mb-3">
-            What is this?
-          </h2>
-          <p className="text-sm text-[#757575] mb-4">
-            This playground is a space for designers and collaborators to rapidly prototype using similar-ish looking UI. It's not connected to production data or live experiments, it's a standalone environment for exploration and validation.
-          </p>
-          
-          <div className="flex gap-3">
-            <Link
-              to="/how-to"
-              className="inline-block bg-[#333333] text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#000000] transition-colors"
-            >
-              How to Get Started
-            </Link>
-            <a 
-              href="https://www.notion.so/faire/Design-Prototyping-Playground-Leveraging-Slate-Community-Components-AI-Tooling-2a72efb5c25a80ad93fbd33a5f82ff82?source=copy_link"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block border border-[#333333] text-[#333333] px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#333333] hover:text-white transition-colors"
-            >
-              Learn more
-            </a>
+            
+            <div className="flex gap-3 justify-center">
+              <a 
+                href="https://www.notion.so/faire/Design-Prototyping-Playground-Leveraging-Slate-Community-Components-AI-Tooling-2a72efb5c25a80ad93fbd33a5f82ff82?source=copy_link"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-[#333333] text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#000000] transition-colors"
+              >
+                Learn more
+              </a>
+              <Link
+                to="/how-to"
+                className="inline-block border border-[#333333] text-[#333333] px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#333333] hover:text-white transition-colors"
+              >
+                Get started
+              </Link>
+            </div>
           </div>
           
-          <div className="border-t border-[#dfe0e1] my-6"></div>
-          
-          <div className="grid md:grid-cols-3 gap-4">
-              <div>
-                <h3 className="text-sm font-semibold text-[#333333] mb-2">✅ This Is:</h3>
-                <ul className="space-y-1 text-sm text-[#757575]">
-                  <li>• A local prototyping space</li>
-                  <li>• For testing layouts & interactions</li>
-                  <li>• Using familiar components</li>
-                  <li>• Fast iteration without overhead</li>
-                </ul>
-              </div>
+          {/* What is this card - anchored to bottom */}
+          <div className="px-12 pb-8" style={{ flexShrink: 0 }}>
+            <div 
+              className="mx-auto bg-white rounded-3xl shadow-sm hover:shadow-xl transition-shadow duration-300 px-8 py-6"
+              style={{ maxWidth: '800px' }}
+            >
+              <h2 className="text-2xl font-semibold text-[#333333] mb-2" style={{ fontFamily: 'Nantes, serif' }}>
+                *Wait, what is this?
+              </h2>
+              <p className="text-sm text-[#757575] mb-4">
+                It is a space for designers and collaborators to rapidly prototype using similar-ish looking UI. It's not connected to production data or live experiments, it's a standalone environment for exploration and validation.
+              </p>
               
-              <div>
-                <h3 className="text-sm font-semibold text-[#333333] mb-2">🚫 This Is Not:</h3>
-                <ul className="space-y-1 text-sm text-[#757575]">
-                  <li>• A source of truth for production</li>
-                  <li>• Connected to live data</li>
-                  <li>• A replacement for Storybook</li>
-                  <li>• Production-ready code</li>
-                </ul>
-              </div>
-              
-              <div>
-                <h3 className="text-sm font-semibold text-[#333333] mb-2">📋 Fidelity:</h3>
-                <ul className="space-y-1 text-sm text-[#757575]">
-                  <li>• Visually close to production</li>
-                  <li>• Behavioral intent, not logic</li>
-                  <li>• Mock data is fine</li>
-                  <li>• Focus on speed & clarity</li>
-                </ul>
-              </div>
+              <div className="grid md:grid-cols-3 gap-4">
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#333333] mb-2">✅ This Is:</h3>
+                    <ul className="space-y-1 text-sm text-[#757575]">
+                      <li>• A local prototyping space</li>
+                      <li>• For testing layouts & interactions</li>
+                      <li>• Using familiar components</li>
+                      <li>• Fast iteration without overhead</li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#333333] mb-2">🚫 This Is Not:</h3>
+                    <ul className="space-y-1 text-sm text-[#757575]">
+                      <li>• A source of truth for production</li>
+                      <li>• Connected to live data</li>
+                      <li>• A replacement for Storybook</li>
+                      <li>• Production-ready code</li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-sm font-semibold text-[#333333] mb-2">📋 Fidelity:</h3>
+                    <ul className="space-y-1 text-sm text-[#757575]">
+                      <li>• Visually close to production</li>
+                      <li>• Behavioral intent, not logic</li>
+                      <li>• Mock data is fine</li>
+                      <li>• Focus on speed & clarity</li>
+                    </ul>
+                  </div>
+                </div>
             </div>
           </div>
         </div>
