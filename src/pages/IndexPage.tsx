@@ -195,7 +195,7 @@ export default function IndexPage() {
 
   // Tab navigation component
   const TabNav = () => (
-    <div className="flex gap-6 pr-4">
+    <div className="flex gap-6">
       <Link
         to="/experimental"
         className={`py-3 px-1 text-sm font-medium transition-colors relative ${
@@ -243,7 +243,7 @@ export default function IndexPage() {
   return (
     <div className={`bg-[#f5f5f5] ${isDefault ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
       {/* Header - Fixed with tabs in top-right */}
-      <header className={`${isDefault ? 'fixed' : 'sticky'} top-0 left-0 right-0 bg-[#f5f5f5] z-50`} style={{ borderBottom: '1px solid #dfe0e1' }}>
+      <header className={`${isDefault ? 'fixed' : 'sticky'} top-0 left-0 right-0 bg-[#f5f5f5] z-50 border-b border-[#dfe0e1]`}>
         <div className="mx-auto px-12" style={{ maxWidth: "1440px", height: '64px' }}>
           <div className="flex items-center justify-between h-full">
             {/* Left: Faire logo */}
@@ -251,7 +251,7 @@ export default function IndexPage() {
               <img 
                 alt="Faire Logo" 
                 src="https://cdn.faire.com/static/logo.svg" 
-                className="h-4"
+                className="h-3"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.src = "http://localhost:3845/assets/1e3ffc68be20eda669774f7388f9632f2f0bab67.svg";
@@ -306,10 +306,10 @@ export default function IndexPage() {
           </div>
           
           {/* What is this card - anchored to bottom */}
-          <div className="px-12 pb-8" style={{ flexShrink: 0 }}>
+          <div className="px-4" style={{ flexShrink: 0 }}>
             <div 
-              className="mx-auto bg-white rounded-3xl shadow-sm hover:shadow-xl transition-shadow duration-300 px-8 py-6"
-              style={{ maxWidth: '800px' }}
+              className="mx-auto bg-white rounded-t-3xl shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_4px_16px_rgba(0,0,0,0.04)] px-8 py-6"
+              style={{ maxWidth: '1000px' }}
             >
               <h2 className="text-2xl font-semibold text-[#333333] mb-2" style={{ fontFamily: 'Nantes, serif' }}>
                 *Wait, what is this?

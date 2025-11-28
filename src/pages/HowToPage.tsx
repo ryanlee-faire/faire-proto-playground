@@ -1,365 +1,326 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-// Placeholder component for screenshots
-const ImagePlaceholder = ({ label }: { label: string }) => (
-  <div className="bg-[#e0e0e0] rounded-lg flex items-center justify-center text-[#757575] text-sm font-medium border-2 border-dashed border-[#c0c0c0]" style={{ height: '200px' }}>
-    📷 {label}
-  </div>
-);
-
 export default function HowToPage() {
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
       {/* Header */}
-      <header className="sticky top-0 bg-[#f5f5f5] z-50" style={{ borderBottom: '1px solid #dfe0e1' }}>
+      <header className="sticky top-0 left-0 right-0 bg-[#f5f5f5] z-50 border-b border-[#dfe0e1]">
         <div className="mx-auto px-12" style={{ maxWidth: "1440px", height: '64px' }}>
           <div className="flex items-center justify-between h-full">
+            {/* Left: Faire logo */}
             <Link to="/" className="flex items-center">
               <img 
                 alt="Faire Logo" 
                 src="https://cdn.faire.com/static/logo.svg" 
-                className="h-4"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = "http://localhost:3845/assets/1e3ffc68be20eda669774f7388f9632f2f0bab67.svg";
-                }}
+                className="h-3"
               />
             </Link>
             
-            <Link to="/" className="text-sm text-[#757575] hover:text-[#333333] transition-colors">
-              ← Back to home
-            </Link>
+            {/* Right: Navigation tabs */}
+            <div className="flex gap-6">
+              <Link
+                to="/experimental"
+                className="py-3 px-1 text-sm font-medium text-[#757575] hover:text-[#333333] transition-colors"
+              >
+                Experimental
+              </Link>
+              <Link
+                to="/templates"
+                className="py-3 px-1 text-sm font-medium text-[#757575] hover:text-[#333333] transition-colors"
+              >
+                Templates
+              </Link>
+              <Link
+                to="/components"
+                className="py-3 px-1 text-sm font-medium text-[#757575] hover:text-[#333333] transition-colors"
+              >
+                Components
+              </Link>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="px-12 py-16">
-        <div className="mx-auto" style={{ maxWidth: "800px" }}>
-          
-          {/* Title */}
-          <h1 className="text-5xl md:text-6xl text-[#333333] mb-4" style={{ fontFamily: 'Nantes, serif' }}>
-            Getting started
-          </h1>
-          <p className="text-base text-[#757575] mb-8">
-            Build prototypes using AI. You describe what you want – Cursor handles the code.
-          </p>
-
-          {/* Support Callout - Top */}
-          <div className="bg-[#fff8e6] border border-[#f5d77a] rounded-xl p-4 mb-12">
-            <p className="text-sm text-[#333333]">
-              <strong>🙋 Need help?</strong> Stuck on something? Drop a message in <strong>#design-proto-playground</strong> on Slack – we're here to help!
-            </p>
+      {/* Paper container */}
+      <div className="px-4 pt-8 md:pt-12">
+        <div 
+          className="mx-auto bg-white rounded-t-3xl shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_4px_16px_rgba(0,0,0,0.04)]"
+          style={{ maxWidth: "1000px" }}
+        >
+          {/* Document header */}
+          <div className="px-8 md:px-16 py-6 border-b border-[#e5e5e5]">
+            <span className="text-xs font-medium tracking-widest text-[#666666] uppercase">
+              Faire Prototyping Playground
+            </span>
           </div>
 
-          {/* Prerequisites */}
-          <div className="bg-white rounded-2xl shadow-sm p-6 mb-12">
-            <h2 className="text-lg font-semibold text-[#333333] mb-4">
-              Before you begin
-            </h2>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <span className="text-lg">☐</span>
-                <span className="text-sm text-[#757575]">
-                  <strong className="text-[#333333]">Cursor is installed</strong> – Download at <a href="https://cursor.sh" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#333333]">cursor.sh</a> if you haven't yet
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-lg">☐</span>
-                <span className="text-sm text-[#757575]">
-                  <strong className="text-[#333333]">GitHub access granted</strong> – Ask Ryan or John if you need access to the repo
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-lg">☐</span>
-                <span className="text-sm text-[#757575]">
-                  <strong className="text-[#333333]">You have an idea</strong> – A feature, flow, or concept you want to prototype
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Steps */}
-          <div className="space-y-6">
-            
-            {/* Step 1 */}
-            <div className="bg-white rounded-2xl shadow-sm p-6">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#333333] text-white flex items-center justify-center font-semibold text-sm">
-                  1
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-[#333333]">
-                    Clone the repo
-                  </h3>
-                  <p className="text-xs text-[#757575] mt-1">One-time setup</p>
-                </div>
-              </div>
-              
-              <div className="ml-12">
-                <ol className="space-y-3 text-sm text-[#757575] mb-4">
-                  <li><strong className="text-[#333333]">1.</strong> Open Cursor</li>
-                  <li><strong className="text-[#333333]">2.</strong> On the welcome screen, click <strong className="text-[#333333]">"Clone repo"</strong></li>
-                </ol>
-                
-                <div className="mb-4">
-                  <ImagePlaceholder label="Screenshot: Cursor welcome screen with Clone repo button" />
-                </div>
-                
-                <ol start={3} className="space-y-3 text-sm text-[#757575] mb-4">
-                  <li><strong className="text-[#333333]">3.</strong> Paste this URL:</li>
-                </ol>
-                
-                <div className="bg-[#f5f5f5] rounded-lg p-3 mb-4">
-                  <code className="text-xs text-[#333333] break-all">https://github.com/ryanlee-faire/faire-proto-playground</code>
-                </div>
-                
-                <ol start={4} className="space-y-3 text-sm text-[#757575]">
-                  <li><strong className="text-[#333333]">4.</strong> Choose where to save it (Desktop or Documents works fine)</li>
-                  <li><strong className="text-[#333333]">5.</strong> Click <strong className="text-[#333333]">"Open"</strong> when Cursor asks</li>
-                </ol>
-                
-                <div className="mt-4 p-3 bg-[#f0f7ff] rounded-lg border border-[#cce0ff]">
-                  <p className="text-xs text-[#333333]">
-                    <strong>First time only:</strong> Cursor may ask to install dependencies – just click Yes. This takes about 30 seconds.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div className="bg-white rounded-2xl shadow-sm p-6">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#333333] text-white flex items-center justify-center font-semibold text-sm">
-                  2
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-[#333333]">
-                    Start a new prototype
-                  </h3>
-                  <p className="text-xs text-[#757575] mt-1">This is where the magic happens</p>
-                </div>
-              </div>
-              
-              <div className="ml-12">
-                <ol className="space-y-3 text-sm text-[#757575] mb-4">
-                  <li><strong className="text-[#333333]">1.</strong> Click the <strong className="text-[#333333]">chat icon</strong> or press <strong className="text-[#333333]">Cmd+L</strong> to open a new agent</li>
-                </ol>
-                
-                <div className="mb-4">
-                  <ImagePlaceholder label="Screenshot: Cursor chat/agent panel" />
-                </div>
-                
-                <ol start={2} className="space-y-3 text-sm text-[#757575] mb-4">
-                  <li><strong className="text-[#333333]">2.</strong> Type: <code className="bg-[#f5f5f5] px-2 py-1 rounded text-xs">"I want to build a new prototype"</code></li>
-                  <li><strong className="text-[#333333]">3.</strong> Answer the agent's questions:</li>
-                </ol>
-                
-                <ul className="ml-6 space-y-2 text-sm text-[#757575] mb-4">
-                  <li>• What's your feature called?</li>
-                  <li>• Link to your PRD or Notion doc?</li>
-                  <li>• Is it for Brand or Retailer surface?</li>
-                </ul>
-                
-                <ol start={4} className="space-y-3 text-sm text-[#757575]">
-                  <li><strong className="text-[#333333]">4.</strong> Cursor builds everything for you!</li>
-                </ol>
-                
-                <div className="mt-4 p-4 bg-[#f5f5f5] rounded-lg">
-                  <p className="text-sm font-semibold text-[#333333] mb-2">
-                    What Cursor does automatically:
-                  </p>
-                  <ul className="space-y-1 text-xs text-[#757575]">
-                    <li>✓ Creates a new git branch with your feature name</li>
-                    <li>✓ Creates the prototype page file</li>
-                    <li>✓ Adds it to the gallery</li>
-                    <li>✓ Uses Faire design patterns</li>
-                    <li>✓ Adds mock data</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="bg-white rounded-2xl shadow-sm p-6">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#333333] text-white flex items-center justify-center font-semibold text-sm">
-                  3
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-[#333333]">
-                    Keep building
-                  </h3>
-                  <p className="text-xs text-[#757575] mt-1">Iterate until you're happy</p>
-                </div>
-              </div>
-              
-              <div className="ml-12">
-                <p className="text-sm text-[#757575] mb-4">
-                  Continue talking to Cursor to make changes. Just describe what you want:
-                </p>
-                
-                <ul className="space-y-2 text-sm text-[#757575] mb-4">
-                  <li>• "Make the button bigger"</li>
-                  <li>• "Add a sidebar with navigation"</li>
-                  <li>• "Change the header to match this screenshot"</li>
-                </ul>
-                
-                <div className="p-3 bg-[#f0f7ff] rounded-lg border border-[#cce0ff]">
-                  <p className="text-xs text-[#333333]">
-                    <strong>💡 Pro tip:</strong> Push your code to GitHub regularly for safekeeping. Ask Cursor: "Push my changes to GitHub"
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Step 4 */}
-            <div className="bg-white rounded-2xl shadow-sm p-6">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#333333] text-white flex items-center justify-center font-semibold text-sm">
-                  4
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-[#333333]">
-                    Submit for review
-                  </h3>
-                  <p className="text-xs text-[#757575] mt-1">Get feedback before going live</p>
-                </div>
-              </div>
-              
-              <div className="ml-12">
-                <ol className="space-y-3 text-sm text-[#757575] mb-4">
-                  <li><strong className="text-[#333333]">1.</strong> Ask Cursor: <code className="bg-[#f5f5f5] px-2 py-1 rounded text-xs">"Push my changes and help me create a PR"</code></li>
-                  <li><strong className="text-[#333333]">2.</strong> Go to GitHub and open your Pull Request</li>
-                </ol>
-                
-                <div className="mb-4">
-                  <ImagePlaceholder label="Screenshot: GitHub Pull Request page" />
-                </div>
-                
-                <ol start={3} className="space-y-3 text-sm text-[#757575]">
-                  <li><strong className="text-[#333333]">3.</strong> Tag <strong className="text-[#333333]">Gabe</strong> (or another reviewer) for feedback</li>
-                  <li><strong className="text-[#333333]">4.</strong> Wait for approval, then merge!</li>
-                </ol>
-              </div>
-            </div>
-
-            {/* Step 5 */}
-            <div className="bg-white rounded-2xl shadow-sm p-6">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#333333] text-white flex items-center justify-center font-semibold text-sm">
-                  5
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-[#333333]">
-                    Go live! 🎉
-                  </h3>
-                  <p className="text-xs text-[#757575] mt-1">Share your prototype with anyone</p>
-                </div>
-              </div>
-              
-              <div className="ml-12">
-                <p className="text-sm text-[#757575] mb-4">
-                  Once your PR is merged, Vercel automatically deploys your prototype. It'll be live at:
-                </p>
-                
-                <div className="bg-[#f5f5f5] rounded-lg p-3 mb-4">
-                  <code className="text-xs text-[#333333]">faire-proto-playground.vercel.app/your-prototype-name</code>
-                </div>
-                
-                <p className="text-sm text-[#757575]">
-                  Share that URL with stakeholders, drop it in Slack, add it to your PRD – anyone can view it!
-                </p>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Guardrails */}
-          <div className="mt-12 bg-[#fff5f5] border border-[#ffcdd2] rounded-2xl p-6">
-            <h2 className="text-lg font-semibold text-[#333333] mb-4">
-              ⚠️ Important: Keep it isolated
-            </h2>
-            <p className="text-sm text-[#757575] mb-4">
-              Multiple designers work in this playground. To avoid conflicts, please follow these guidelines:
-            </p>
-            
-            <div className="grid md:grid-cols-2 gap-6">
+          {/* Title section with TOC */}
+          <div className="px-8 md:px-16 py-12 md:py-16">
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between md:gap-12">
               <div>
-                <h3 className="text-sm font-semibold text-[#2e7d32] mb-2">✅ Do this</h3>
-                <ul className="space-y-1 text-sm text-[#757575]">
-                  <li>• Create new prototypes</li>
-                  <li>• Edit YOUR prototype files</li>
-                  <li>• Add new templates or components</li>
-                  <li>• Work on your own branch</li>
-                </ul>
+                <h1 className="text-4xl md:text-5xl font-normal text-[#000000] tracking-tight mb-4" style={{ fontFamily: 'ui-serif, Georgia, serif' }}>
+                  Getting Started Guide
+                </h1>
+                <a 
+                  href="https://fairewhosale.slack.com/channels/design-proto-playground" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-[#666666] hover:text-[#000000] border border-[#e0e0e0] hover:border-[#999999] rounded-full px-4 py-2 transition-colors"
+                >
+                  <span>↗</span>
+                  <span>#design-proto-playground</span>
+                </a>
               </div>
               
-              <div>
-                <h3 className="text-sm font-semibold text-[#c62828] mb-2">🚫 Avoid this</h3>
-                <ul className="space-y-1 text-sm text-[#757575]">
-                  <li>• Editing the index page</li>
-                  <li>• Modifying existing templates</li>
-                  <li>• Changing shared components</li>
-                  <li>• Editing other people's prototypes</li>
-                </ul>
+              {/* Table of contents */}
+              <div className="space-y-3 flex-shrink-0">
+                <TOCItem number={1} title="One-time setup" href="#setup" />
+                <TOCItem number={2} title="Build your prototype" href="#build" />
+                <TOCItem number={3} title="Go live" href="#go-live" />
+                <TOCItem number={4} title="Tips & FAQ" href="#tips" />
               </div>
             </div>
-            
-            <p className="text-xs text-[#757575] mt-4">
-              <strong>Why?</strong> Editing shared files can create merge conflicts and break other people's work. When in doubt, ask in <strong>#design-proto-playground</strong> first!
-            </p>
           </div>
 
-          {/* FAQ */}
-          <div className="mt-12 bg-white rounded-2xl shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-[#333333] mb-6">
-              Common questions
+          {/* Introduction */}
+          <Section label="Introduction">
+            <p className="text-[#444444] leading-relaxed">
+              The Faire Prototyping Playground is a lightweight, standalone environment that lets non-technical designers rapidly build and test interfaces using Faire's UI components — without touching the monorepo. Using AI tools like Cursor, you describe what you want in plain English and the AI writes the code. Prototypes are good enough to validate concepts, demonstrate intended interactions, and share with stakeholders, but not meant to ship directly. Think of it as a clean room for exploring ideas with real components, minus the complexity of staging environments and business logic.
+            </p>
+          </Section>
+
+          {/* One-time setup */}
+          <Section label="One-time setup" id="setup">
+            <h2 className="text-xl md:text-2xl font-medium text-[#000000] mb-4" style={{ fontFamily: 'ui-serif, Georgia, serif' }}>
+              Get set up in a few minutes.
+            </h2>
+            <p className="text-[#444444] leading-relaxed mb-6">
+              You only need to do this once. After that, starting new prototypes takes almost no time.
+            </p>
+
+            <p className="text-[#888888] text-sm mb-6">
+              This guide assumes you have Cursor installed and GitHub set up. If not, please take care of that first.
+            </p>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-medium text-[#000000] mb-2">1. Clone the playground repo</h3>
+                <p className="text-[#444444] leading-relaxed mb-3">
+                  Open Cursor and click <strong>"Clone Git Repository..."</strong> on the welcome screen. When prompted, paste this URL:
+                </p>
+                <div className="bg-[#f5f5f5] rounded px-4 py-3 font-mono text-sm text-[#333333] mb-3">
+                  https://github.com/ryanlee-faire/faire-proto-playground
+                </div>
+                <p className="text-[#444444] leading-relaxed">
+                  Choose where to save it (Desktop works fine), then click <strong>"Open"</strong> when asked. Cursor may prompt you to install dependencies — click Yes.
+                </p>
+              </div>
+
+            </div>
+          </Section>
+
+          {/* Build your prototype */}
+          <Section label="Build your prototype" id="build">
+            <h2 className="text-xl md:text-2xl font-medium text-[#000000] mb-4" style={{ fontFamily: 'ui-serif, Georgia, serif' }}>
+              Start a conversation with Cursor.
             </h2>
             
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-medium text-[#000000] mb-2">1. Open the AI chat</h3>
+                <p className="text-[#444444] leading-relaxed">
+                  Press <kbd className="px-1.5 py-0.5 bg-[#f5f5f5] border border-[#e0e0e0] rounded text-xs font-mono">⌘</kbd> + <kbd className="px-1.5 py-0.5 bg-[#f5f5f5] border border-[#e0e0e0] rounded text-xs font-mono">L</kbd> or click the chat icon in the sidebar.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-medium text-[#000000] mb-2">2. Start with the keyphrase</h3>
+                
+                <div className="bg-[#f5f5f5] rounded px-4 py-3 mb-4 font-mono text-sm text-[#333333]">
+                  "I want to build a new prototype"
+                </div>
+                
+                <p className="text-[#444444] leading-relaxed mb-3">
+                  <strong>Why this phrase?</strong> We've configured Cursor with custom instructions (called "Cursor Rules") specifically for this playground. When you say "I want to build a new prototype," it triggers a guided workflow that knows exactly how to set things up — creating the right files, adding your prototype to the gallery, using Faire's design patterns, and more.
+                </p>
+                <p className="text-[#444444] leading-relaxed">
+                  Cursor will ask you a few questions: What's your feature called? Do you have a PRD or Notion doc? Is it for Brand or Retailer? Answer these and watch it build your prototype automatically.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-medium text-[#000000] mb-2">3. You're off to the races</h3>
+                <p className="text-[#444444] leading-relaxed">
+                  From here, just keep the conversation going. Describe what you want to change, drag in screenshots for reference, and iterate until you're happy with it.
+                </p>
+              </div>
+            </div>
+          </Section>
+
+          {/* Go live */}
+          <Section label="Go live" id="go-live">
+            <h2 className="text-xl md:text-2xl font-medium text-[#000000] mb-4" style={{ fontFamily: 'ui-serif, Georgia, serif' }}>
+              Share your prototype with anyone.
+            </h2>
+            
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-medium text-[#000000] mb-2">1. Submit your work</h3>
+                <p className="text-[#444444] leading-relaxed mb-3">
+                  Tell Cursor:
+                </p>
+                <div className="bg-[#f5f5f5] rounded px-4 py-3 mb-3 font-mono text-sm text-[#333333]">
+                  "Push my changes and create a PR"
+                </div>
+                <p className="text-[#444444] leading-relaxed">
+                  It will give you a link to your Pull Request on GitHub.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-medium text-[#000000] mb-2">2. Get reviewed</h3>
+                <p className="text-[#444444] leading-relaxed">
+                  Add someone as a reviewer (Gabe, Ryan, John, etc). They'll make sure everything is good to go.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-medium text-[#000000] mb-2">3. Merge and you're live</h3>
+                <p className="text-[#444444] leading-relaxed mb-3">
+                  Once approved, click the green <strong>Merge</strong> button. Your prototype deploys automatically and will be live at:
+                </p>
+                <div className="bg-[#f5f5f5] rounded px-4 py-3 font-mono text-sm text-[#333333]">
+                  faire-proto-playground.vercel.app/<span className="text-[#16a34a]">your-prototype</span>
+                </div>
+                <p className="text-[#888888] text-sm mt-3">
+                  Share this link with anyone — no login required.
+                </p>
+              </div>
+            </div>
+          </Section>
+
+          {/* Tips */}
+          <Section label="Tips" id="tips">
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-semibold text-[#333333] mb-1">
-                  Do I need to know how to code?
-                </h3>
-                <p className="text-sm text-[#757575]">
-                  Nope! Just describe what you want. Cursor writes the code for you.
+                <h3 className="font-medium text-[#000000] mb-1">Save regularly</h3>
+                <p className="text-[#444444] leading-relaxed">
+                  Tell the AI <em>"Push my changes to GitHub"</em> to back up your work anytime.
                 </p>
               </div>
-              
+
               <div>
-                <h3 className="text-sm font-semibold text-[#333333] mb-1">
-                  What if something breaks?
-                </h3>
-                <p className="text-sm text-[#757575]">
-                  Tell Cursor what's wrong – it can fix errors and adjust things. Your prototype is isolated, so you can't break other people's work.
+                <h3 className="font-medium text-[#000000] mb-1">Coming back later?</h3>
+                <p className="text-[#444444] leading-relaxed">
+                  Open Cursor, press ⌘+L, and say <em>"I want to continue working on [your feature name]"</em>.
                 </p>
               </div>
-              
+
               <div>
-                <h3 className="text-sm font-semibold text-[#333333] mb-1">
-                  Can I come back and continue later?
-                </h3>
-                <p className="text-sm text-[#757575]">
-                  Yes! Just open Cursor, start a new agent chat, and say "I want to continue working on [your feature name]". Cursor will pick up where you left off.
+                <h3 className="font-medium text-[#000000] mb-1">Keep it isolated</h3>
+                <p className="text-[#444444] leading-relaxed">
+                  Only edit your own prototype files. Don't modify the home page, shared components, or other people's work — this prevents conflicts.
                 </p>
               </div>
             </div>
-          </div>
+          </Section>
 
-          {/* Bottom CTA */}
-          <div className="mt-12 text-center">
-            <Link 
-              to="/"
-              className="inline-block bg-[#333333] text-white px-8 py-3 rounded-lg text-sm font-medium hover:bg-[#000000] transition-colors"
-            >
-              Back to Playground
-            </Link>
-          </div>
+          {/* FAQ */}
+          <Section label="FAQ" isLast>
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-medium text-[#000000] mb-1">Do I need to know how to code?</h3>
+                <p className="text-[#444444] leading-relaxed">
+                  No. Just describe what you want in plain English. The AI writes all the code for you.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-medium text-[#000000] mb-1">What if something breaks?</h3>
+                <p className="text-[#444444] leading-relaxed">
+                  Just tell the AI what's wrong — "The button isn't working" or "I see an error". It can diagnose and fix issues.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-medium text-[#000000] mb-1">How long until my prototype is live?</h3>
+                <p className="text-[#444444] leading-relaxed">
+                  Once your PR is merged, it deploys in about 1-2 minutes.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-medium text-[#000000] mb-1">Can I use my own images?</h3>
+                <p className="text-[#444444] leading-relaxed">
+                  Yes. Drag images into the chat or paste URLs. Say "Make it look like this" and the AI will try to match it.
+                </p>
+              </div>
+            </div>
+          </Section>
 
         </div>
       </div>
+    </div>
+  );
+}
+
+// Section component with label on the left
+function Section({ 
+  label, 
+  children, 
+  isLast = false,
+  id
+}: { 
+  label: string; 
+  children: React.ReactNode; 
+  isLast?: boolean;
+  id?: string;
+}) {
+  return (
+    <div id={id} className={`px-8 md:px-16 py-10 md:py-12 ${!isLast ? 'border-b border-[#e5e5e5]' : ''} scroll-mt-20`}>
+      <div className="flex flex-col md:flex-row md:gap-12">
+        <div className="md:w-40 flex-shrink-0 mb-4 md:mb-0">
+          <span className="text-sm text-[#888888]">{label}</span>
+        </div>
+        <div className="flex-1 max-w-[560px]">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Table of contents item
+function TOCItem({ 
+  number, 
+  title, 
+  href
+}: { 
+  number: number; 
+  title: string; 
+  href?: string;
+}) {
+  const content = (
+    <>
+      <span className="w-6 h-6 rounded-full bg-[#f5f5f5] text-[#666666] text-xs flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[#e5e5e5] transition-colors">
+        {number}
+      </span>
+      <span className="font-medium text-[#000000]">{title}</span>
+    </>
+  );
+
+  if (href) {
+    return (
+      <a href={href} className="flex items-start gap-3 group hover:opacity-70 transition-opacity">
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <div className="flex items-start gap-3">
+      {content}
     </div>
   );
 }
